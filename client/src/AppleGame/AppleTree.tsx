@@ -43,19 +43,19 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       
-      // Fixed positions that are guaranteed to be on the green foliage
-      // These coordinates match the center points of the tree foliage circles in the SVG
+      // Fixed positions that are guaranteed to be on the crown/top of the tree only
+      // These coordinates match only the top part of tree foliage in the SVG
       const foliagePositions = [
-        { x: 280, y: 230 },  // Left lower foliage
-        { x: 330, y: 170 },  // Left upper foliage
-        { x: 400, y: 150 },  // Top center foliage
-        { x: 470, y: 170 },  // Right upper foliage
-        { x: 520, y: 230 },  // Right lower foliage
-        { x: 300, y: 250 },  // Left middle foliage
-        { x: 500, y: 250 },  // Right middle foliage
-        { x: 350, y: 200 },  // Left-center foliage
-        { x: 450, y: 200 },  // Right-center foliage
-        { x: 380, y: 180 },  // Upper-center extra position
+        { x: 330, y: 130 },  // Left upper crown
+        { x: 360, y: 110 },  // Left-top crown
+        { x: 400, y: 100 },  // Top center crown
+        { x: 440, y: 110 },  // Right-top crown
+        { x: 470, y: 130 },  // Right upper crown
+        { x: 350, y: 150 },  // Upper left-center crown
+        { x: 380, y: 140 },  // Upper center-left crown
+        { x: 420, y: 140 },  // Upper center-right crown
+        { x: 450, y: 150 },  // Upper right-center crown
+        { x: 400, y: 125 },  // Top-center crown
       ];
       
       // Use only the number of positions we need for the current maxApples setting
