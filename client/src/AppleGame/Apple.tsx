@@ -124,8 +124,10 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
     zIndex: 5,
     width: '40px',
     height: '40px',
-    opacity: hasLanded ? 0 : 1, // Fade out when it falls off screen
-    transition: hasLanded ? 'opacity 0.3s' : 'none',
+    // Make apple completely disappear when eaten by hedgehog
+    opacity: hasLanded ? 0 : 1,
+    transition: hasLanded ? 'opacity 0.2s' : 'none',
+    display: hasLanded ? 'none' : 'block', // Remove from DOM after transition
   };
 
   return (

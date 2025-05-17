@@ -143,9 +143,10 @@ const AppleTree: React.FC<AppleTreeProps> = ({
         />
       ))}
       
-      {/* Counter for apples collected */}
-      <div className="apple-counter">
-        <div className="apple-counter-value">{applesCollected}</div>
+      {/* Apples collected counter in top left corner */}
+      <div className="apples-collected-counter">
+        <img src="/assets/apple.svg" alt="Яблоко" className="apple-icon" />
+        <span className="apples-count">{applesCollected}</span>
       </div>
       
       {/* Number counter */}
