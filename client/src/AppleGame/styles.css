@@ -174,7 +174,51 @@
   color: white;
 }
 
-/* Removed basket display styles */
+.success-count {
+  position: relative;
+  width: 220px;
+  height: 180px;
+  margin: 20px auto;
+  background-color: #fff9e6;
+  border-radius: 15px;
+  border: 4px solid #8B4513;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+
+.success-number {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e74c3c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 3px solid white;
+}
+
+.success-apples {
+  position: relative;
+  width: 200px;
+  height: 160px;
+}
+
+.success-apple {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+}
 
 .success-screen {
   display: flex;

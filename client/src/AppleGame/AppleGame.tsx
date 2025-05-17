@@ -111,18 +111,18 @@ const AppleGame = () => {
         <div className="success-screen">
           <h1>Молодец!</h1>
           <p>Ты правильно посчитал яблоки!</p>
-          <div className="basket-display">
-            <img src="/assets/basket.svg" alt="Basket" className="basket-success" />
-            <div className="apples-in-basket">
+          <div className="success-count">
+            <div className="success-number">{applesCollected}</div>
+            <div className="success-apples">
               {Array.from({ length: applesCollected }).map((_, i) => (
                 <img 
                   key={i} 
                   src="/assets/apple.svg" 
                   alt="Apple" 
-                  className="apple-in-basket"
+                  className="success-apple"
                   style={{ 
-                    left: `${10 + (i * 15)}px`, 
-                    top: `${10 + (Math.sin(i) * 5)}px`,
+                    left: `${(i % 5) * 40}px`, 
+                    top: `${Math.floor(i / 5) * 40}px`,
                     zIndex: i
                   }} 
                 />

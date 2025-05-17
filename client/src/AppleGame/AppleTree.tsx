@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
 import Apple from './Apple';
-import Basket from './Basket';
 import AudioManager from './AudioManager';
 
 interface ApplePosition {
@@ -9,8 +8,6 @@ interface ApplePosition {
   x: number;
   y: number;
   collected: boolean;
-  finalX?: number; // Final X position in the basket after falling
-  finalY?: number; // Final Y position in the basket after falling
 }
 
 interface AppleTreeProps {
@@ -25,11 +22,8 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   applesCollected 
 }) => {
   const [apples, setApples] = useState<ApplePosition[]>([]);
-  const [basketPosition, setBasketPosition] = useState({ x: 0 });
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [countVisible, setCountVisible] = useState<boolean>(false);
-  const [fallingAppleX, setFallingAppleX] = useState<number | undefined>(undefined);
-  const [isAppleFalling, setIsAppleFalling] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { playHit } = useAudio();
 
@@ -76,9 +70,6 @@ const AppleTree: React.FC<AppleTreeProps> = ({
       }
       
       setApples(applePositions);
-      
-      // Position basket in the middle
-      setBasketPosition({ x: containerWidth / 2 - 75 });
     }
   }, [maxApples]);
 
@@ -89,10 +80,6 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     // Find the clicked apple to get its position
     const clickedApple = apples.find(apple => apple.id === id);
     if (!clickedApple) return;
-    
-    // Set the falling apple coordinates for basket to follow
-    setFallingAppleX(clickedApple.x);
-    setIsAppleFalling(true);
     
     // Mark apple as collected
     setApples(prev => prev.map(apple => 
@@ -108,11 +95,9 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     // Trigger parent callback
     onAppleCollected();
     
-    // Hide counter and reset falling state after a delay
+    // Hide counter after a delay
     setTimeout(() => {
       setCountVisible(false);
-      setIsAppleFalling(false);
-      setFallingAppleX(undefined);
     }, 1500);
   };
 
