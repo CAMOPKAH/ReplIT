@@ -37,7 +37,7 @@ const Hedgehog: React.FC<HedgehogProps> = ({ isEating, position }) => {
       }}
     >
       <img 
-        src="/assets/hedgehog.svg" 
+        src="/assets/new-hedgehog.svg" 
         alt="Ёжик" 
         className={`hedgehog ${animation === 'eating' ? 'hedgehog-eating' : ''}`}
       />
