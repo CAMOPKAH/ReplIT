@@ -1,144 +1,290 @@
 import { useState, useEffect } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
-import AppleTree from './AppleTree';
+import { useGame } from '@/lib/stores/useGame';
+import FruitTree from './FruitTree';
 import NumberSelection from './NumberSelection';
 import AudioManager from './AudioManager';
-import { GameState } from './GameStates';
+import GameModeSelector from './GameModeSelector';
+import SortingGame from './SortingGame';
+import MathGame from './MathGame';
+import { GameMode, FruitType } from './FruitTypes';
 import './styles.css';
 
-const AppleGame = () => {
-  const [gameState, setGameState] = useState<GameState>('collecting');
-  const [applesCollected, setApplesCollected] = useState<number>(0);
-  const [maxApples, setMaxApples] = useState<number>(1); // Start with just 1 apple for easiest difficulty
-  const [incorrectAttempts, setIncorrectAttempts] = useState<number>(0);
-  const [correctAnswerStreak, setCorrectAnswerStreak] = useState<number>(0);
-  const { toggleMute, isMuted } = useAudio();
+export default function AppleGame() {
+  // Game state
+  const [gameState, setGameState] = useState<'collecting' | 'selecting' | 'success' | 'hint'>('collecting');
+  const [applesCollected, setApplesCollected] = useState(0);
+  const [incorrectAttempts, setIncorrectAttempts] = useState(0);
+  const [level, setLevel] = useState(1);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [showLevelComplete, setShowLevelComplete] = useState(false);
+  const [gameMode, setGameMode] = useState<GameMode>(GameMode.COUNTING);
+  const { start: startGame, phase } = useGame();
+  
+  // Audio initialization
+  const { setBackgroundMusic, setHitSound, setSuccessSound, isMuted, toggleMute } = useAudio();
+  
+  // Compute max apples based on level (1-10)
+  const maxApples = Math.min(level, 10);
+  const requiredCorrectAnswers = 3; // Need 3 correct answers to advance
 
-  // When all apples are collected, transition to the number selection phase
+  // Initialize audio on component mount
   useEffect(() => {
-    if (applesCollected > 0 && applesCollected === maxApples) {
-      setTimeout(() => {
-        setGameState('selecting');
-      }, 1000); // Wait a moment after the last apple is collected
-    }
-  }, [applesCollected, maxApples]);
+    const backgroundMusic = new Audio('/sounds/background.mp3');
+    backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.2;
+    setBackgroundMusic(backgroundMusic);
+    
+    const hitSound = new Audio('/sounds/hit.mp3');
+    hitSound.volume = 0.6;
+    setHitSound(hitSound);
+    
+    const successSound = new Audio('/sounds/success.mp3');
+    successSound.volume = 0.7;
+    setSuccessSound(successSound);
+    
+    // Start the game
+    startGame();
+    
+    // Initial instruction
+    const speech = new SpeechSynthesisUtterance('Собирай фрукты!');
+    speech.lang = 'ru-RU';
+    setTimeout(() => {
+      speechSynthesis.speak(speech);
+    }, 1000);
+  }, [setBackgroundMusic, setHitSound, setSuccessSound, startGame]);
 
-  const handleAppleCollected = () => {
-    if (applesCollected < maxApples) {
-      setApplesCollected(prev => prev + 1);
-    }
+  // Reset game state when changing game mode
+  useEffect(() => {
+    handleReset();
+  }, [gameMode]);
+
+  // Handle apple collection
+  const handleAppleCollected = (type: FruitType) => {
+    setApplesCollected(prevCount => {
+      const newCount = prevCount + 1;
+      
+      // Check if we've collected all apples for this round
+      if (newCount >= maxApples && gameMode === GameMode.COUNTING) {
+        setGameState('selecting');
+        const speech = new SpeechSynthesisUtterance('Сколько фруктов ты собрал?');
+        speech.lang = 'ru-RU';
+        setTimeout(() => {
+          speechSynthesis.speak(speech);
+        }, 1000);
+      }
+      
+      return newCount;
+    });
   };
 
+  // Handle number selection in counting mode
   const handleNumberSelected = (number: number) => {
-    if (number === applesCollected) {
-      // Correct number selected
+    if (number === maxApples) {
+      // Correct answer
       setGameState('success');
+      setCorrectAnswers(prev => prev + 1);
+      setIncorrectAttempts(0);
       
-      // Increment correct answer streak
-      setCorrectAnswerStreak(prev => prev + 1);
-      
-      // Reset for next round after a delay
-      setTimeout(() => {
-        resetGame();
-      }, 3000);
+      // Check if player should advance to next level
+      if (correctAnswers + 1 >= requiredCorrectAnswers) {
+        setShowLevelComplete(true);
+        const speech = new SpeechSynthesisUtterance('Отлично! Ты перешёл на новый уровень!');
+        speech.lang = 'ru-RU';
+        setTimeout(() => {
+          speechSynthesis.speak(speech);
+          setLevel(prev => Math.min(prev + 1, 10));
+          setCorrectAnswers(0);
+        }, 1000);
+      }
     } else {
-      // Incorrect number selected
+      // Incorrect answer
       setIncorrectAttempts(prev => prev + 1);
       
-      // Reset streak on incorrect answer
-      setCorrectAnswerStreak(0);
+      // After 2 incorrect attempts, show a hint
+      if (incorrectAttempts + 1 >= 2) {
+        setGameState('hint');
+      }
     }
   };
 
-  // Handle difficulty progression
-  useEffect(() => {
-    // If player has 3 correct answers in a row, increase difficulty
-    if (correctAnswerStreak >= 3) {
-      // Increase difficulty by adding one more apple (max 10)
-      setMaxApples(prev => Math.min(prev + 1, 10));
-      
-      // Reset streak counter
-      setCorrectAnswerStreak(0);
-    }
-  }, [correctAnswerStreak]);
-
-  const resetGame = () => {
+  // Reset game state for a new round
+  const handleReset = () => {
     setGameState('collecting');
     setApplesCollected(0);
     setIncorrectAttempts(0);
-    // Difficulty is now handled by the correctAnswerStreak effect
+    setShowLevelComplete(false);
   };
 
-  // Messages to be spoken in different game states
-  const gameMessages = {
-    success: "Молодец! Ты правильно посчитал, сколько яблок собрал ёжик!",
-    start: "Собери яблоки с дерева! Ёжик их съест."
+  // Handle game mode selection
+  const handleModeSelect = (mode: GameMode) => {
+    setGameMode(mode);
+    setLevel(1); // Reset level when changing modes
+    setCorrectAnswers(0);
+  };
+
+  // Handle completion of sorting or math games
+  const handleGameSuccess = () => {
+    setCorrectAnswers(prev => prev + 1);
+  };
+
+  // Advance to next level in sorting or math games
+  const handleNextLevel = () => {
+    if (correctAnswers + 1 >= requiredCorrectAnswers) {
+      setShowLevelComplete(true);
+      const speech = new SpeechSynthesisUtterance('Отлично! Ты перешёл на новый уровень!');
+      speech.lang = 'ru-RU';
+      setTimeout(() => {
+        speechSynthesis.speak(speech);
+        setLevel(prev => Math.min(prev + 1, 10));
+        setCorrectAnswers(0);
+        setShowLevelComplete(false);
+      }, 2000);
+    }
+  };
+
+  // If the game hasn't started yet, show nothing
+  if (phase !== 'playing') {
+    return null;
+  }
+
+  // Render the appropriate game component based on mode
+  const renderGameContent = () => {
+    switch (gameMode) {
+      case GameMode.COUNTING:
+        return (
+          <>
+            {gameState === 'collecting' && (
+              <FruitTree 
+                maxFruits={maxApples} 
+                onFruitCollected={handleAppleCollected} 
+                fruitsCollected={applesCollected}
+              />
+            )}
+            
+            {gameState === 'selecting' && (
+              <NumberSelection 
+                correctNumber={maxApples}
+                onNumberSelected={handleNumberSelected}
+                incorrectAttempts={incorrectAttempts}
+                applesCollected={applesCollected}
+              />
+            )}
+            
+            {(gameState === 'success' || gameState === 'hint') && (
+              <div className="result-screen">
+                {gameState === 'success' ? (
+                  <div className="success-message">
+                    <h2>Правильно!</h2>
+                    <p>Ты собрал {maxApples} {maxApples === 1 ? 'фрукт' : (maxApples >= 2 && maxApples <= 4) ? 'фрукта' : 'фруктов'}</p>
+                    
+                    <AudioManager 
+                      currentCount={applesCollected} 
+                      isCorrectAnswer={true} 
+                      message={`Правильно! ${maxApples}!`}
+                    />
+                    
+                    {showLevelComplete ? (
+                      <div className="level-up">
+                        <h3>Уровень пройден!</h3>
+                        <p>Следующий уровень: {level + 1}</p>
+                        <button className="next-level-button" onClick={handleReset}>
+                          Продолжить
+                        </button>
+                      </div>
+                    ) : (
+                      <button className="reset-button" onClick={handleReset}>
+                        Играть снова
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="hint-message">
+                    <h2>Подсказка</h2>
+                    <p>Посчитай внимательно, сколько фруктов ты собрал.</p>
+                    <div className="fruit-counter">
+                      {Array.from({ length: maxApples }).map((_, index) => (
+                        <img 
+                          key={index} 
+                          src="/assets/apple.svg" 
+                          alt="apple" 
+                          className="hint-apple" 
+                        />
+                      ))}
+                    </div>
+                    <AudioManager 
+                      currentCount={applesCollected} 
+                      isWrongAnswer={true} 
+                      message={`Давай посчитаем вместе! ${Array.from({ length: maxApples }).map((_, i) => i + 1).join(', ')}`}
+                    />
+                    <button className="try-again-button" onClick={() => setGameState('selecting')}>
+                      Попробовать снова
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        );
+        
+      case GameMode.SORTING_BY_COLOR:
+        return (
+          <SortingGame 
+            sortingType="color"
+            onSuccess={handleGameSuccess}
+            onNextLevel={handleNextLevel}
+            difficulty={level}
+            maxCorrect={requiredCorrectAnswers}
+          />
+        );
+        
+      case GameMode.SORTING_BY_SIZE:
+        return (
+          <SortingGame 
+            sortingType="size"
+            onSuccess={handleGameSuccess}
+            onNextLevel={handleNextLevel}
+            difficulty={level}
+            maxCorrect={requiredCorrectAnswers}
+          />
+        );
+        
+      case GameMode.MATH_ADDITION:
+        return (
+          <MathGame 
+            mathType="addition"
+            onSuccess={handleGameSuccess}
+            onNextLevel={handleNextLevel}
+            difficulty={level}
+          />
+        );
+        
+      case GameMode.MATH_SUBTRACTION:
+        return (
+          <MathGame 
+            mathType="subtraction"
+            onSuccess={handleGameSuccess}
+            onNextLevel={handleNextLevel}
+            difficulty={level}
+          />
+        );
+      
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="apple-game">
-      <button onClick={toggleMute} className="sound-button">
-        {isMuted ? '🔇' : '🔊'}
-      </button>
+      <div className="game-header">
+        <div className="level-indicator">Уровень: {level}</div>
+        <GameModeSelector onSelectMode={handleModeSelect} currentMode={gameMode} />
+        <button className="sound-toggle" onClick={toggleMute}>
+          {isMuted ? 'Включить звук' : 'Выключить звук'}
+        </button>
+      </div>
       
-      {gameState === 'collecting' && (
-        <>
-          <AppleTree 
-            maxApples={maxApples} 
-            onAppleCollected={handleAppleCollected}
-            applesCollected={applesCollected}
-          />
-          {/* Initial instruction audio */}
-          {applesCollected === 0 && (
-            <AudioManager 
-              currentCount={0}
-              message={gameMessages.start}
-            />
-          )}
-        </>
-      )}
-      
-      {gameState === 'selecting' && (
-        <NumberSelection 
-          correctNumber={applesCollected}
-          onNumberSelected={handleNumberSelected}
-          incorrectAttempts={incorrectAttempts}
-          applesCollected={applesCollected}
-        />
-      )}
-      
-      {gameState === 'success' && (
-        <div className="success-screen">
-          <h1>Молодец!</h1>
-          <p>Ты правильно посчитал, сколько яблок собрал ёжик!</p>
-          <div className="success-count">
-            <div className="success-number">{applesCollected}</div>
-            <div className="success-apples">
-              {Array.from({ length: applesCollected }).map((_, i) => (
-                <img 
-                  key={i} 
-                  src="/assets/apple.svg" 
-                  alt="Apple" 
-                  className="success-apple"
-                  style={{ 
-                    left: `${(i % 5) * 40}px`, 
-                    top: `${Math.floor(i / 5) * 40}px`,
-                    zIndex: i
-                  }} 
-                />
-              ))}
-            </div>
-          </div>
-          {/* Success message audio */}
-          <AudioManager 
-            currentCount={0}
-            isCorrectAnswer={true}
-            message={gameMessages.success}
-          />
-        </div>
-      )}
+      {renderGameContent()}
     </div>
   );
-};
-
-export default AppleGame;
+}
