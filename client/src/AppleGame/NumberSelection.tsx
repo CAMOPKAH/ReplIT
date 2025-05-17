@@ -19,7 +19,7 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
   const [showHint, setShowHint] = useState<boolean>(false);
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean>(false);
   const [isWrongAnswer, setIsWrongAnswer] = useState<boolean>(false);
-  const [promptMessage, setPromptMessage] = useState<string>("Сколько яблок в корзине?");
+  const [promptMessage, setPromptMessage] = useState<string>("Сколько яблок собрал ёжик?");
   const { playSuccess, playHit } = useAudio();
   
   // Generate number options for selection
@@ -44,7 +44,7 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
       
       // Set hint message with delay to allow previous speech to finish
       setTimeout(() => {
-        setPromptMessage(`Посмотри на корзину: там ${correctNumber} яблок${correctNumber > 1 ? 'а' : ''}. Давай попробуем ещё раз!`);
+        setPromptMessage(`Ёжик собрал ${correctNumber} яблок${correctNumber > 1 ? 'а' : ''}. Давай попробуем ещё раз!`);
       }, 500);
     }
   }, [incorrectAttempts, correctNumber]);
@@ -106,22 +106,21 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
     <div className="number-selection">
       {showHint && (
         <div className="hint">
-          Посмотри на корзину: там {correctNumber} яблок{correctNumber > 1 && 'а'}. Давай попробуем ещё раз!
+          Ёжик собрал {correctNumber} яблок{correctNumber > 1 && 'а'}. Давай попробуем ещё раз!
         </div>
       )}
       
-      <div className="basket-display">
-        <img src="/assets/basket.svg" alt="Basket" className="basket-success" />
-        <div className="apples-in-basket">
+      <div className="apples-display">
+        <div className="apples-collected">
           {Array.from({ length: applesCollected }).map((_, i) => (
             <img 
               key={i} 
               src="/assets/apple.svg" 
-              alt="Apple" 
-              className="apple-in-basket"
+              alt="Яблоко" 
+              className="apple-collected"
               style={{ 
-                left: `${10 + (i * 15)}px`, 
-                top: `${10 + (Math.sin(i) * 5)}px`,
+                left: `${(i % 5) * 40}px`, 
+                top: `${Math.floor(i / 5) * 40}px`,
                 zIndex: i
               }} 
             />

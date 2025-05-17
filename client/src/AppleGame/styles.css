@@ -115,7 +115,32 @@
   100% { transform: translateY(0); }
 }
 
-/* Removed basket-related styles */
+.apples-display {
+  position: relative;
+  width: 220px;
+  height: 180px;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  border-radius: 15px;
+  border: 2px dashed #8B4513;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+}
+
+.apples-collected {
+  position: relative;
+  width: 200px;
+  height: 150px;
+}
+
+.apple-collected {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.2));
+}
 
 .counter {
   position: absolute;

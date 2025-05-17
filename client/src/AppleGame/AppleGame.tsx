@@ -71,8 +71,8 @@ const AppleGame = () => {
 
   // Messages to be spoken in different game states
   const gameMessages = {
-    success: "Молодец! Ты правильно посчитал яблоки!",
-    start: "Собери яблоки с дерева!"
+    success: "Молодец! Ты правильно посчитал, сколько яблок собрал ёжик!",
+    start: "Собери яблоки с дерева! Ёжик их съест."
   };
 
   return (
