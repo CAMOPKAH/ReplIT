@@ -4,9 +4,15 @@ interface BasketProps {
   position: { x: number };
   followFallingApple?: boolean; // Flag to determine if basket should follow falling apples
   fallingAppleX?: number; // X-coordinate of currently falling apple
+  appleCount?: number; // Current count of apples in the basket
 }
 
-const Basket: React.FC<BasketProps> = ({ position, followFallingApple = false, fallingAppleX }) => {
+const Basket: React.FC<BasketProps> = ({ 
+  position, 
+  followFallingApple = false, 
+  fallingAppleX,
+  appleCount = 0
+}) => {
   const [isShaking, setIsShaking] = useState(false);
   const [currentX, setCurrentX] = useState(position.x);
   const basketRef = useRef<HTMLDivElement>(null);
@@ -25,7 +31,7 @@ const Basket: React.FC<BasketProps> = ({ position, followFallingApple = false, f
   useEffect(() => {
     if (followFallingApple && fallingAppleX !== undefined) {
       // Set target position to follow the apple, but keep basket within viewport
-      const basketWidth = basketRef.current?.clientWidth || 150;
+      const basketWidth = basketRef.current?.clientWidth || 200; // Updated to match the new larger basket
       const halfBasketWidth = basketWidth / 2;
       
       // Calculate the viewport constraints
@@ -87,6 +93,25 @@ const Basket: React.FC<BasketProps> = ({ position, followFallingApple = false, f
     };
   }, []);
   
+  // Determine the counter style based on apple count
+  const getCounterStyle = (): React.CSSProperties => {
+    return {
+      position: 'absolute',
+      top: '15px',  // Positioned over the counter circle in the SVG
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '40px',
+      height: '40px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '24px',
+      fontWeight: 'bold',
+      color: '#e74c3c',  // Red color for visibility
+      zIndex: 20,
+    };
+  };
+  
   return (
     <div 
       ref={basketRef}
@@ -94,6 +119,13 @@ const Basket: React.FC<BasketProps> = ({ position, followFallingApple = false, f
       style={{ left: `${currentX}px` }}
     >
       <img src="/assets/basket.svg" alt="Basket" className="basket" />
+      
+      {/* Display the apple count on the basket */}
+      {appleCount > 0 && (
+        <div style={getCounterStyle()}>
+          {appleCount}
+        </div>
+      )}
     </div>
   );
 };

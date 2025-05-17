@@ -128,11 +128,12 @@ const AppleTree: React.FC<AppleTreeProps> = ({
         />
       ))}
       
-      {/* Basket at the bottom - now follows falling apples */}
+      {/* Basket at the bottom - now follows falling apples and shows the count */}
       <Basket 
         position={basketPosition} 
         followFallingApple={isAppleFalling}
         fallingAppleX={fallingAppleX}
+        appleCount={applesCollected}
       />
       
       {/* Number counter */}
