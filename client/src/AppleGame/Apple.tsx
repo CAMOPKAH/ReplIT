@@ -47,7 +47,8 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       const viewportHeight = window.innerHeight;
       
       // Define where apples should fall to (near bottom of screen, at hedgehog level)
-      const hedgehogLevel = viewportHeight - 120; // Approx. where hedgehog is
+      const hedgehogLevel = viewportHeight - 160; // Hedgehog's top position
+      const hedgehogBottomLevel = viewportHeight - 80; // Bottom/ground position
       const centerX = viewportWidth / 2;
       
       // Add randomness to where apples fall
@@ -76,7 +77,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
           setRotation(prev => prev + rotationSpeed);
           
           // If apple has reached hedgehog level, mark it as "landed"
-          if (newY >= hedgehogLevel) {
+          if (newY >= hedgehogLevel && newY < hedgehogBottomLevel) {
             if (!hasLanded) {
               setHasLanded(true);
               // When the apple reaches the hedgehog, we don't need to track it anymore
@@ -87,6 +88,18 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
             }
             // Keep it at hedgehog level
             newY = hedgehogLevel;
+          }
+          
+          // If apple has fallen below hedgehog (past hedgehog), make it disappear
+          if (newY >= hedgehogBottomLevel) {
+            if (!hasLanded) {
+              setHasLanded(true);
+              // When the apple falls below hedgehog, we don't need to track it anymore
+              if (intervalRef.current) {
+                cancelAnimationFrame(intervalRef.current);
+                intervalRef.current = null;
+              }
+            }
           }
           
           return { x: newX, y: newY };
