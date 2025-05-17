@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Математическая игра с яблоками и ёжиком</title>
+  <style>
+    /* Общие стили */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f9ff;
+      overflow-x: hidden;
+    }
+    
+    /* Контейнер игры */
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      height: 100vh;
+      max-height: 800px;
+      margin: 0 auto;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* Стили дерева */
+    .tree-container {
+      width: 100%;
+      height: 80%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .tree-svg {
+      width: 100%;
+      height: 100%;
+      max-height: 800px;
+      position: relative;
+      transform-origin: center bottom;
+      transform: scale(1.2) scaleX(1.5);
+      margin-top: 20px;
+    }
+    
+    /* Стили для яблок */
+    .apple {
+      width: 45px;
+      height: 45px;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s;
+      z-index: 10;
+      filter: drop-shadow(0 3px 2px rgba(0,0,0,0.2));
+      animation: apple-wiggle 3s infinite ease-in-out;
+    }
+    
+    .apple:hover {
+      transform: scale(1.15) rotate(-10deg);
+      filter: drop-shadow(0 5px 3px rgba(0,0,0,0.3));
+    }
+    
+    .apple-falling {
+      animation: fall 1.2s cubic-bezier(0.2, 0.8, 0.5, 1) forwards;
+      filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
+    }
+    
+    @keyframes apple-wiggle {
+      0% { transform: rotate(0deg) translateY(0); }
+      25% { transform: rotate(3deg) translateY(-2px); }
+      50% { transform: rotate(0deg) translateY(0); }
+      75% { transform: rotate(-3deg) translateY(2px); }
+      100% { transform: rotate(0deg) translateY(0); }
+    }
+    
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+      }
+      20% {
+        transform: translateY(100px) rotate(30deg) scale(1.05);
+      }
+      40% {
+        transform: translateY(200px) rotate(90deg) scale(1);
+      }
+      60% {
+        transform: translateY(300px) rotate(180deg) scale(0.95);
+      }
+      80% {
+        transform: translateY(400px) rotate(270deg) scale(0.9);
+      }
+      100% {
+        transform: translateY(500px) rotate(360deg) scale(0.85);
+      }
+    }
+    
+    /* Стили ежика */
+    .hedgehog-container {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 180px;
+      height: 140px;
+      z-index: 20;
+      transition: left 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+      filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+    }
+    
+    .hedgehog {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.2s;
+      animation: hedgehog-bounce 0.6s infinite alternate;
+    }
+    
+    .hedgehog-eating {
+      transform: scale(1.15);
+      animation: hedgehog-eat 0.5s;
+    }
+    
+    @keyframes hedgehog-bounce {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-3px) rotate(1deg); }
+    }
+    
+    @keyframes hedgehog-eat {
+      0% { transform: scale(1) rotate(0deg); }
+      30% { transform: scale(1.2) rotate(-3deg); }
+      60% { transform: scale(1.15) rotate(2deg); }
+      100% { transform: scale(1.1) rotate(0deg); }
+    }
+    
+    @keyframes hedgehog-jump {
+      0% { transform: translateY(0) scale(1); }
+      40% { transform: translateY(-20px) scale(1.1); }
+      70% { transform: translateY(-5px) scale(0.95); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    
+    /* Стили счетчика яблок */
+    .apples-collected-counter {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+    }
+    
+    .apple-icon {
+      width: 30px;
+      height: 30px;
+      margin-right: 10px;
+    }
+    
+    .apples-count {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e53935;
+    }
+    
+    /* Стили для выбора числа */
+    .number-selection {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .number-button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s;
+    }
+    
+    .number-button:hover {
+      transform: scale(1.1);
+      background-color: #43A047;
+    }
+    
+    .number-button:active {
+      transform: scale(0.95);
+    }
+    
+    .counter {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 72px;
+      font-weight: bold;
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      animation: counter-appear 0.5s;
+      z-index: 100;
+    }
+    
+    @keyframes counter-appear {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    
+    /* Стили для сообщений */
+    .message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      font-size: 24px;
+      text-align: center;
+      z-index: 1000;
+    }
+    
+    .success-message {
+      color: #43A047;
+    }
+    
+    .hint-message {
+      color: #FF5722;
+    }
+    
+    /* Стили для состояний игры */
+    .game-screen {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.9);
+      z-index: 500;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    /* Кнопка для перезапуска игры */
+    .restart-button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s;
+    }
+    
+    .restart-button:hover {
+      background-color: #1976D2;
+      transform: scale(1.05);
+    }
+    
+    .restart-button:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container" id="game-container">
+    <!-- Игровой экран -->
+    <div id="game-screen">
+      <div class="tree-container">
+        <!-- Дерево (SVG внедрен напрямую) -->
+        <svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" class="tree-svg">
+          <!-- Тень земли -->
+          <ellipse cx="400" cy="510" rx="160" ry="40" fill="#2E4112" opacity="0.2" />
+          
+          <!-- Ствол дерева (изометрический стиль) -->
+          <path d="M400 300 L385 500 L415 500 L400 300" fill="#8D5524" />
+          <path d="M400 300 L385 500 L370 490 L385 290" fill="#6D4017" />
+          <path d="M400 300 L415 500 L430 490 L415 290" fill="#A06328" />
+          
+          <!-- Ветви дерева (изометрические) -->
+          <path d="M400 300 L320 230 L290 220" stroke="#8D5524" stroke-width="8" fill="none" />
+          <path d="M400 300 L480 230 L510 220" stroke="#A06328" stroke-width="8" fill="none" />
+          <path d="M400 300 L370 200 L350 170" stroke="#8D5524" stroke-width="8" fill="none" />
+          <path d="M400 300 L430 200 L450 170" stroke="#A06328" stroke-width="8" fill="none" />
+          
+          <!-- Мелкие ветви -->
+          <path d="M290 220 L270 240" stroke="#8D5524" stroke-width="4" fill="none" />
+          <path d="M290 220 L270 210" stroke="#6D4017" stroke-width="4" fill="none" />
+          <path d="M350 170 L330 160" stroke="#8D5524" stroke-width="4" fill="none" />
+          <path d="M350 170 L340 150" stroke="#8D5524" stroke-width="4" fill="none" />
+          <path d="M510 220 L530 240" stroke="#A06328" stroke-width="4" fill="none" />
+          <path d="M510 220 L530 210" stroke="#A06328" stroke-width="4" fill="none" />
+          <path d="M450 170 L470 160" stroke="#A06328" stroke-width="4" fill="none" />
+          <path d="M450 170 L460 150" stroke="#A06328" stroke-width="4" fill="none" />
+          
+          <!-- Листва (нижний слой, темнее) -->
+          <ellipse cx="290" cy="220" rx="55" ry="45" fill="#1F5924" />
+          <ellipse cx="510" cy="220" rx="55" ry="45" fill="#1F5924" />
+          <ellipse cx="350" cy="170" rx="65" ry="55" fill="#1F5924" />
+          <ellipse cx="450" cy="170" rx="65" ry="55" fill="#1F5924" />
+          <ellipse cx="400" cy="150" rx="75" ry="65" fill="#1F5924" />
+          
+          <!-- Листва (средний слой) -->
+          <ellipse cx="280" cy="210" rx="50" ry="40" fill="#2D7A32" />
+          <ellipse cx="520" cy="210" rx="50" ry="40" fill="#2D7A32" />
+          <ellipse cx="345" cy="160" rx="58" ry="48" fill="#2D7A32" />
+          <ellipse cx="455" cy="160" rx="58" ry="48" fill="#2D7A32" />
+          <ellipse cx="400" cy="140" rx="68" ry="58" fill="#2D7A32" />
+          
+          <!-- Листва (верхний слой, светлее) -->
+          <ellipse cx="275" cy="200" rx="42" ry="33" fill="#4CA658" />
+          <ellipse cx="525" cy="200" rx="42" ry="33" fill="#4CA658" />
+          <ellipse cx="340" cy="150" rx="50" ry="40" fill="#4CA658" />
+          <ellipse cx="460" cy="150" rx="50" ry="40" fill="#4CA658" />
+          <ellipse cx="400" cy="130" rx="60" ry="50" fill="#4CA658" />
+          
+          <!-- Блики для 3D эффекта -->
+          <ellipse cx="270" cy="195" rx="25" ry="18" fill="#64CF73" opacity="0.6" />
+          <ellipse cx="525" cy="195" rx="25" ry="18" fill="#64CF73" opacity="0.6" />
+          <ellipse cx="335" cy="145" rx="30" ry="22" fill="#64CF73" opacity="0.6" />
+          <ellipse cx="465" cy="145" rx="30" ry="22" fill="#64CF73" opacity="0.6" />
+          <ellipse cx="395" cy="125" rx="35" ry="28" fill="#64CF73" opacity="0.6" />
+        </svg>
+        
+        <!-- Счетчик собранных яблок -->
+        <div class="apples-collected-counter">
+          <svg width="30" height="30" viewBox="0 0 30 30" class="apple-icon">
+            <circle cx="15" cy="15" r="12" fill="#E53935" />
+            <path d="M15 3 L17 8 L13 8 Z" fill="#43A047" />
+            <path d="M15 3 Q18 5, 17 8" stroke="#43A047" stroke-width="1.5" fill="none" />
+          </svg>
+          <span class="apples-count" id="apples-count">0</span>
+        </div>
+        
+        <!-- Яблоки будут добавлены через JavaScript -->
+        <div id="apples-container"></div>
+        
+        <!-- Ежик -->
+        <div class="hedgehog-container" id="hedgehog-container">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" class="hedgehog">
+            <!-- Тень -->
+            <ellipse cx="256" cy="460" rx="140" ry="30" fill="#00000055"/>
+            
+            <!-- Слой иголок (задний) -->
+            <g>
+              <!-- Левая сторона -->
+              <path d="M120,260 L60,200" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M130,230 L55,160" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M150,210 L80,125" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M180,200 L110,110" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M210,190 L150,90" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M120,290 L40,260" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M130,320 L50,320" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M150,350 L80,390" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              
+              <!-- Правая сторона -->
+              <path d="M390,260 L450,200" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M380,230 L455,160" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M360,210 L430,125" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M330,200 L400,110" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M300,190 L360,90" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M390,290 L470,260" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M380,320 L460,320" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M360,350 L430,390" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              
+              <!-- Верхние иголки -->
+              <path d="M240,180 L210,80" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M256,175 L256,70" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+              <path d="M275,180 L300,80" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+            </g>
+            
+            <!-- Средний слой иголок -->
+            <g>
+              <!-- Левая сторона -->
+              <path d="M140,250 L90,205" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M150,225 L90,170" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M170,205 L115,135" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M190,195 L135,120" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M215,185 L170,100" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M140,280 L75,255" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M150,310 L80,310" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M170,340 L110,375" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              
+              <!-- Правая сторона -->
+              <path d="M370,250 L420,205" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M360,225 L420,170" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M340,205 L395,135" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M320,195 L375,120" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M295,185 L340,100" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M370,280 L435,255" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M360,310 L430,310" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M340,340 L400,375" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              
+              <!-- Верхние иголки -->
+              <path d="M235,178 L210,90" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M256,173 L256,85" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+              <path d="M280,178 L305,90" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+            </g>
+            
+            <!-- Передний слой иголок - самые яркие и четкие -->
+            <g>
+              <!-- Левая сторона -->
+              <path d="M160,240 L120,210" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M170,220 L125,180" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M190,200 L150,145" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M210,190 L165,130" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M230,185 L190,110" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M160,270 L110,250" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M170,300 L110,300" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M190,330 L140,360" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              
+              <!-- Правая сторона -->
+              <path d="M350,240 L390,210" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M340,220 L385,180" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M320,200 L360,145" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M300,190 L345,130" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M280,185 L320,110" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M350,270 L400,250" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M340,300 L400,300" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M320,330 L370,360" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              
+              <!-- Верхние иголки -->
+              <path d="M230,176 L215,100" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M256,171 L256,95" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+              <path d="M285,176 L300,100" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+            </g>
+            
+            <!-- Тело ежика с градиентом для объемности -->
+            <g>
+              <!-- Основное тело -->
+              <ellipse cx="256" cy="280" rx="130" ry="110" fill="#795548"/>
+              
+              <!-- Верхний блик для объемности -->
+              <ellipse cx="256" cy="250" rx="110" ry="80" fill="#8D6E63"/>
+              
+              <!-- Блик сверху для 3D эффекта -->
+              <ellipse cx="256" cy="235" rx="60" ry="40" fill="#A1887F" opacity="0.6"/>
+            </g>
+            
+            <!-- Живот ежика (светлее) с градиентом -->
+            <g>
+              <ellipse cx="256" cy="320" rx="85" ry="60" fill="#A1887F"/>
+              <ellipse cx="256" cy="315" rx="75" ry="50" fill="#BCAAA4"/>
+              <ellipse cx="256" cy="310" rx="60" ry="40" fill="#D7CCC8"/>
+            </g>
+            
+            <!-- Голова ежика с градиентом для объемности -->
+            <g>
+              <!-- Основа головы -->
+              <ellipse cx="256" cy="210" rx="70" ry="60" fill="#795548"/>
+              
+              <!-- Верхний слой для объемности -->
+              <ellipse cx="256" cy="205" rx="60" ry="50" fill="#8D6E63"/>
+            </g>
+            
+            <!-- Мордочка ежика (светлее) с градиентом -->
+            <g>
+              <ellipse cx="256" cy="225" rx="50" ry="40" fill="#8D6E63"/>
+              <ellipse cx="256" cy="222" rx="42" ry="32" fill="#A1887F"/>
+              <ellipse cx="256" cy="218" rx="35" ry="25" fill="#BCAAA4" opacity="0.5"/>
+            </g>
+            
+            <!-- Нос с бликом -->
+            <g>
+              <ellipse cx="256" cy="235" rx="14" ry="10" fill="#3E2723"/>
+              <ellipse cx="252" cy="232" rx="4" ry="3" fill="#5D4037"/>
+            </g>
+            
+            <!-- Глаза с бликами -->
+            <g>
+              <!-- Левый глаз -->
+              <ellipse cx="226" cy="210" rx="14" ry="16" fill="white"/>
+              <ellipse cx="226" cy="214" rx="8" ry="10" fill="#263238"/>
+              <ellipse cx="222" cy="210" rx="5" ry="5" fill="white"/>
+              
+              <!-- Правый глаз -->
+              <ellipse cx="286" cy="210" rx="14" ry="16" fill="white"/>
+              <ellipse cx="286" cy="214" rx="8" ry="10" fill="#263238"/>
+              <ellipse cx="282" cy="210" rx="5" ry="5" fill="white"/>
+            </g>
+            
+            <!-- Ушки с оттенками -->
+            <g>
+              <!-- Левое ухо -->
+              <ellipse cx="215" cy="165" rx="15" ry="20" fill="#5D4037"/>
+              <ellipse cx="215" cy="165" rx="10" ry="15" fill="#6D4C41"/>
+              <ellipse cx="215" cy="163" rx="5" ry="10" fill="#795548"/>
+              
+              <!-- Правое ухо -->
+              <ellipse cx="297" cy="165" rx="15" ry="20" fill="#5D4037"/>
+              <ellipse cx="297" cy="165" rx="10" ry="15" fill="#6D4C41"/>
+              <ellipse cx="297" cy="163" rx="5" ry="10" fill="#795548"/>
+            </g>
+            
+            <!-- Лапки с объемом -->
+            <g>
+              <!-- Левая лапка -->
+              <ellipse cx="200" cy="360" rx="30" ry="20" fill="#5D4037"/>
+              <ellipse cx="200" cy="358" rx="24" ry="16" fill="#6D4C41"/>
+              <ellipse cx="200" cy="356" rx="18" ry="12" fill="#795548"/>
+              
+              <!-- Правая лапка -->
+              <ellipse cx="312" cy="360" rx="30" ry="20" fill="#5D4037"/>
+              <ellipse cx="312" cy="358" rx="24" ry="16" fill="#6D4C41"/>
+              <ellipse cx="312" cy="356" rx="18" ry="12" fill="#795548"/>
+            </g>
+            
+            <!-- Рот с улыбкой -->
+            <path d="M235,245 Q256,260 277,245" stroke="#3E2723" stroke-width="3" fill="none"/>
+            
+            <!-- Блики на щеках для объемности -->
+            <ellipse cx="220" cy="230" rx="12" ry="8" fill="#D7CCC8" opacity="0.5"/>
+            <ellipse cx="292" cy="230" rx="12" ry="8" fill="#D7CCC8" opacity="0.5"/>
+          </svg>
+        </div>
+        
+        <!-- Счетчик текущего числа (при сборе) -->
+        <div class="counter" id="counter" style="display: none;">0</div>
+      </div>
+      
+      <!-- Панель выбора числа (появляется после сбора всех яблок) -->
+      <div class="number-selection" id="number-selection" style="display: none;">
+        <!-- Кнопки с числами будут добавлены через JavaScript -->
+      </div>
+      
+      <!-- Сообщение об успехе -->
+      <div class="message success-message" id="success-message" style="display: none;">
+        Правильно! Молодец!
+      </div>
+      
+      <!-- Подсказка -->
+      <div class="message hint-message" id="hint-message" style="display: none;">
+        Подумай еще! Посчитай яблоки внимательнее.
+      </div>
+    </div>
+  </div>
+
+  <!-- Звуковые элементы -->
+  <audio id="background-music" loop>
+    <source src="data:audio/mpeg;base64,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" type="audio/mpeg">
+  </audio>
+  <audio id="hit-sound">
+    <source src="data:audio/mpeg;base64,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ahrx9ZVa0sroMxGTLIAwsSGAuAxgMAkYEYImAgBZgMgIDiBgBACYBQAAgDgJDgFAUwDQAMAQADAKAQMA4AAwDAQAEOXCYCYMGBMCJgIgMMCwzE//7UsQEA8MtsTV/qVwDK65qX9SuABBw4dRqUm9Zff9/97fzIClAMARgAAsYBgHA0AQAi8CAGLQOAQMgcwFQHMAkAjAGAAwCQBMA8AzAKAEwCQPRSAwMMVQMAhizFlIHjQ0Bwr3E2HaXHFWuEWtRpW/yoCkBosDOkGAcYDwAmAIAJgJAEYBoAmAIABgEgABQAQcDgDDIKAsJx2YBgAGAWAZgEAEYAwAgAAo9yKA0YAwAmAOAJgCACCQB6AATMwGgCC0r0jJrIU//tSxAWDwrGxNH+hXAMDrmar9auAjcvY5Lpv+/R9P6zcgCQGAAD5gHAaYAoAmAQABgFgCYAwAGAMABgCAAdgAQcBAEDQOAYWAcGADaWAUAIIgKMAAAwQAtdXBgMAyEAqkqqpb/UoXdPf+7QBMEiQwHwNMAQATAIAAwBgBMAYADgNAaFgGDAAg0MB8CQBAMBAAMAIA4qDgAAYzAHAAwBQAA4AQYAIAACLzRsYBwAGAMAKAAGBIAIE8IhADQBWIVqaGf/+1LEBYPCi7E0f6FcA0iuJq/1K4HUOv/+j+/n7MwBpAYAAPGAcBpgCgCYAgAGAUAJgDAEYAwAGAKAAFYAEGQQBAkDgGEAFBRoYAoAgUAYYAIBimAVamBgFgHDw5LUEh6rtdILt/vy/5QLJhgQAGYCADmAAAhhgGAMAJgDAEYAwAGAMABgDAEBwNAATBMFA0Lg0NAYAojAGAICKYAwAgECo0AUBgcMAYATADAAwBwBMBMAQGA6YAYAg6QUwwCgBU8bZdjSO5Lkbxv//tSxAaDwoexNH+pXAL5riev9SuB/Mz7eYMCQTAEwAgAMAMATADAEwBgAMAQATAEAADAVgIBBgCAAEACDYDQADwoLgAYAQAmAGAIBAIMAIAQeEpwwMgBMAIAAuBw4JhgBgAA4YMAMA4J05LuTlJfmYhJiCmooGBRAYDkBgQQGBAgYDEBgMYGApAYCGBgIQGAYAgDVKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqpMQU1FMy45OS41qqqqqqr/+1LEBoPC068zf6lcA1euZg3fVwKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq//tSxAUDwq+xMm75WAKpq6ZN3TcAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq" type="audio/mpeg">
+  </audio>
+  <audio id="success-sound">
+    <source src="data:audio/mpeg;base64,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" type="audio/mpeg">
+  </audio>
+  <audio id="nyam-sound">
+    <source src="data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAACAAAEqADk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk5OTk//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAABKi/HsDFAAAAAAD/+9DEAAAPDAH/tBAAJeCAPfaCAAuBLA9wPAjI35HAcBwHEtb3Bznf6BJIZREv0CdQ0LqRfIOiIRFMkJEIXoj5U/qeoRu5TSr/4jiIcK+ocBwsP//xwHcDhYf/4WH//5CEhHL//+Q4Xs///yoAGMwqBmwGhGkGKAAYCE4JjBIQXFQzGJi0F0xiICowmUJAoVDYYmKANGBQgLhKY3EwoGJimYBGh8JaQ7j+jALgEEQzGMjEyAMEgAxEDTCQFJgDxIQgKpKQqIkYzB0CYLCxgOAGFAOYHhoDA" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // Основные параметры игры
+    const MAX_APPLES = 5; // Максимальное количество яблок
+    let applesCollected = 0; // Количество собранных яблок
+    let gameState = 'collecting'; // Текущее состояние игры: collecting, selecting, success, hint
+    let incorrectAttempts = 0; // Количество неправильных попыток при выборе числа
+    let currentCount = 0; // Текущий счетчик
+    let applePositions = []; // Позиции яблок
+    let appleInAir = null; // Яблоко, которое сейчас падает
+    let hedgehogPosition = window.innerWidth / 2;
+    let isHedgehogEating = false;
+
+    // Получение элементов DOM
+    const gameContainer = document.getElementById('game-container');
+    const applesContainer = document.getElementById('apples-container');
+    const hedgehogContainer = document.getElementById('hedgehog-container');
+    const applesCountElement = document.getElementById('apples-count');
+    const counterElement = document.getElementById('counter');
+    const numberSelectionElement = document.getElementById('number-selection');
+    const successMessageElement = document.getElementById('success-message');
+    const hintMessageElement = document.getElementById('hint-message');
+    
+    // Аудио-элементы
+    const backgroundMusic = document.getElementById('background-music');
+    const hitSound = document.getElementById('hit-sound');
+    const successSound = document.getElementById('success-sound');
+    const nyamSound = document.getElementById('nyam-sound');
+    
+    // Инициализация параметров звука
+    backgroundMusic.volume = 0.3;
+    hitSound.volume = 0.5;
+    successSound.volume = 0.5;
+    nyamSound.volume = 0.7;
+
+    // Определение фиксированных позиций яблок на зеленых частях дерева
+    function initializeApples() {
+      // Определение кругов листвы для проверки
+      const foliageCircles = [
+        { cx: 250, cy: 200, r: 42 },   // Левая верхняя листва
+        { cx: 330, cy: 150, r: 50 },   // Левая верхушка
+        { cx: 400, cy: 130, r: 60 },   // Верхняя центральная листва
+        { cx: 470, cy: 150, r: 50 },   // Правая верхушка
+        { cx: 550, cy: 200, r: 42 },   // Правая верхняя листва
+        { cx: 290, cy: 180, r: 45 },   // Средняя-левая листва
+        { cx: 510, cy: 180, r: 45 },   // Средняя-правая листва
+      ];
+      
+      // Стартовые позиции для кроны
+      const topCrownPositions = [
+        { x: 250, y: 180 },  // Верхняя левая крона
+        { x: 330, y: 135 },  // Левая верхушка кроны
+        { x: 400, y: 115 },  // Верхняя центральная крона
+        { x: 470, y: 135 },  // Правая верхушка кроны
+        { x: 550, y: 180 },  // Верхняя правая крона
+        { x: 340, y: 145 },  // Верхняя левая-центральная крона
+        { x: 370, y: 125 },  // Левее верхушки кроны
+        { x: 430, y: 125 },  // Правее верхушки кроны
+        { x: 460, y: 145 },  // Верхняя правая-центральная крона
+        { x: 400, y: 130 },  // Верхушка кроны
+        { x: 290, y: 160 },  // Крайняя левая крона
+        { x: 510, y: 160 },  // Крайняя правая крона
+      ];
+      
+      // Функция для проверки, находится ли точка внутри любого из кругов листвы
+      const isInGreenFoliage = (x, y) => {
+        return foliageCircles.some(circle => {
+          // Расчет расстояния от точки до центра круга
+          const dx = x - circle.cx;
+          const dy = y - circle.cy;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          // Точка внутри круга, если расстояние меньше радиуса
+          return distance < circle.r;
+        });
+      };
+      
+      // Перемешивание позиций для разнообразия
+      const shuffledPositions = [...topCrownPositions]
+        .sort(() => Math.random() - 0.5);
+      
+      // Создание позиций яблок
+      applePositions = [];
+      
+      for (let index = 0; index < Math.min(MAX_APPLES, shuffledPositions.length); index++) {
+        let validApplePosition = false;
+        let finalX = 0, finalY = 0;
+        let attempts = 0;
+        
+        // Попытка найти валидную позицию до 5 раз
+        while (!validApplePosition && attempts < 5) {
+          const basePosition = shuffledPositions[index % shuffledPositions.length];
+          
+          // Проверка наличия y-координаты
+          if (basePosition.y === undefined) {
+            attempts++;
+            continue; // Пропускаем эту попытку, если позиция некорректная
+          }
+          
+          // Добавление небольшого случайного смещения
+          const randomOffsetX = Math.random() * 20 - 10;
+          const randomOffsetY = Math.random() * 20 - 10;
+          
+          const candidateX = basePosition.x + randomOffsetX;
+          const candidateY = basePosition.y + randomOffsetY;
+          
+          // Проверка, находится ли позиция в зеленой листве
+          if (isInGreenFoliage(candidateX, candidateY)) {
+            validApplePosition = true;
+            finalX = candidateX;
+            finalY = candidateY;
+          }
+          
+          attempts++;
+        }
+        
+        // Если не нашлась валидная позиция, используем безопасную позицию
+        if (!validApplePosition) {
+          const safeCircle = foliageCircles[index % foliageCircles.length];
+          finalX = safeCircle.cx;
+          finalY = safeCircle.cy;
+        }
+        
+        applePositions.push({
+          id: index,
+          x: finalX,
+          y: finalY,
+          collected: false
+        });
+      }
+      
+      // Отображение яблок
+      renderApples();
+    }
+    
+    // Отображение яблок на странице
+    function renderApples() {
+      // Очистка контейнера яблок
+      applesContainer.innerHTML = '';
+      
+      // Создание яблок
+      applePositions.forEach(apple => {
+        if (!apple.collected) {
+          const appleElement = document.createElement('div');
+          appleElement.className = 'apple';
+          appleElement.style.left = `${apple.x}px`;
+          appleElement.style.top = `${apple.y}px`;
+          
+          // Добавление SVG яблока
+          appleElement.innerHTML = `
+            <svg width="45" height="45" viewBox="0 0 45 45">
+              <circle cx="22.5" cy="22.5" r="20" fill="#E53935" />
+              <path d="M22.5 5 L25 12 L20 12 Z" fill="#43A047" />
+              <path d="M22.5 5 Q27 8, 25 12" stroke="#43A047" stroke-width="1.5" fill="none" />
+            </svg>
+          `;
+          
+          // Обработчик клика
+          appleElement.onclick = () => handleAppleClick(apple.id);
+          
+          // Добавление яблока в контейнер
+          applesContainer.appendChild(appleElement);
+        }
+      });
+      
+      // Обновление счетчика яблок
+      applesCountElement.textContent = applesCollected;
+    }
+    
+    // Обработка клика по яблоку
+    function handleAppleClick(id) {
+      // Если уже собрано максимальное количество яблок, игнорировать клик
+      if (applesCollected >= MAX_APPLES) return;
+      
+      // Поиск яблока по ID
+      const clickedApple = applePositions.find(apple => apple.id === id);
+      if (!clickedApple) return;
+      
+      // Установка текущего яблока в воздухе для отслеживания
+      appleInAir = { id: clickedApple.id, x: clickedApple.x };
+      
+      // Маркировка яблока как собранного
+      applePositions = applePositions.map(apple => 
+        apple.id === id ? { ...apple, collected: true } : apple
+      );
+      
+      // Нахождение элемента яблока
+      const appleElement = applesContainer.querySelector(`.apple[style*="left: ${clickedApple.x}px"]`);
+      if (appleElement) {
+        // Применение класса падения
+        appleElement.classList.add('apple-falling');
+        
+        // Запуск звука удара при начале падения
+        hitSound.currentTime = 0;
+        hitSound.play();
+        
+        // Движение ежика к яблоку и анимация поедания
+        moveHedgehogToApple(clickedApple.x);
+        
+        // Инкремент счетчика собранных яблок
+        applesCollected++;
+        currentCount = applesCollected;
+        
+        // Показываем счетчик на короткое время
+        counterElement.textContent = currentCount;
+        counterElement.style.display = 'block';
+        
+        // Скрываем счетчик через 1.5 секунды
+        setTimeout(() => {
+          counterElement.style.display = 'none';
+        }, 1500);
+        
+        // Обновляем отображение яблок
+        renderApples();
+        
+        // Проверка, все ли яблоки собраны
+        if (applesCollected >= MAX_APPLES) {
+          // Переход к выбору числа после небольшой задержки
+          setTimeout(() => {
+            gameState = 'selecting';
+            showNumberSelection();
+          }, 2000);
+        }
+      }
+    }
+    
+    // Функция движения ежика к яблоку
+    function moveHedgehogToApple(appleX) {
+      // Расчет целевой позиции (центр ежика должен быть под яблоком)
+      const targetX = appleX - 75; // 75 - половина ширины ежика
+      
+      // Текущая позиция
+      let currentX = hedgehogPosition;
+      
+      // Установка интервала для плавного движения
+      const moveInterval = setInterval(() => {
+        // Расчет расстояния и направления
+        const distanceToTarget = targetX - currentX;
+        const direction = Math.sign(distanceToTarget);
+        
+        // Скорость движения (быстрее, если дальше)
+        const speed = Math.min(Math.abs(distanceToTarget), 15);
+        
+        // Если очень близко к цели, устанавливаем точно на цель
+        if (Math.abs(distanceToTarget) < 5) {
+          currentX = targetX;
+          hedgehogPosition = currentX;
+          hedgehogContainer.style.left = `${currentX}px`;
+          clearInterval(moveInterval);
+        } else {
+          // Иначе двигаемся к цели
+          currentX += direction * speed;
+          hedgehogPosition = currentX;
+          hedgehogContainer.style.left = `${currentX}px`;
+        }
+      }, 30);
+      
+      // Показ анимации поедания после того, как яблоко достигает ежика
+      setTimeout(() => {
+        isHedgehogEating = true;
+        hedgehogContainer.querySelector('.hedgehog').classList.add('hedgehog-eating');
+        
+        // Воспроизведение звука "ням" при поедании яблока
+        nyamSound.currentTime = 0;
+        nyamSound.play();
+        
+        // Сброс анимации поедания
+        setTimeout(() => {
+          isHedgehogEating = false;
+          hedgehogContainer.querySelector('.hedgehog').classList.remove('hedgehog-eating');
+          appleInAir = null;
+        }, 500);
+      }, 900); // Немного меньший тайминг для лучшей синхронизации с анимацией падения
+    }
+    
+    // Показываем панель выбора числа
+    function showNumberSelection() {
+      numberSelectionElement.innerHTML = '';
+      
+      // Создаем кнопки с числами от 1 до 10
+      for (let i = 1; i <= 10; i++) {
+        const button = document.createElement('button');
+        button.className = 'number-button';
+        button.textContent = i;
+        button.onclick = () => handleNumberSelection(i);
+        numberSelectionElement.appendChild(button);
+      }
+      
+      numberSelectionElement.style.display = 'flex';
+    }
+    
+    // Обработка выбора числа
+    function handleNumberSelection(selectedNumber) {
+      if (selectedNumber === MAX_APPLES) {
+        // Правильный выбор
+        gameState = 'success';
+        showSuccessMessage();
+      } else {
+        // Неправильный выбор
+        incorrectAttempts++;
+        if (incorrectAttempts >= 2) {
+          // Показываем подсказку после нескольких неправильных попыток
+          gameState = 'hint';
+          showHintMessage();
+        } else {
+          // Просто сообщаем о неправильном выборе
+          hintMessageElement.textContent = 'Попробуй еще раз. Внимательно посчитай яблоки!';
+          hintMessageElement.style.display = 'block';
+          
+          setTimeout(() => {
+            hintMessageElement.style.display = 'none';
+          }, 2000);
+        }
+      }
+    }
+    
+    // Показать сообщение об успехе
+    function showSuccessMessage() {
+      numberSelectionElement.style.display = 'none';
+      successMessageElement.style.display = 'block';
+      
+      // Воспроизведение звука успеха
+      successSound.play();
+      
+      // Добавление кнопки для перезапуска игры
+      const restartButton = document.createElement('button');
+      restartButton.className = 'restart-button';
+      restartButton.textContent = 'Играть снова';
+      restartButton.onclick = resetGame;
+      successMessageElement.appendChild(restartButton);
+    }
+    
+    // Показать подсказку
+    function showHintMessage() {
+      numberSelectionElement.style.display = 'none';
+      hintMessageElement.textContent = `На дереве было ${MAX_APPLES} яблок. Давай попробуем еще раз!`;
+      hintMessageElement.style.display = 'block';
+      
+      // Добавление кнопки для повторной попытки
+      const tryAgainButton = document.createElement('button');
+      tryAgainButton.className = 'restart-button';
+      tryAgainButton.textContent = 'Попробовать еще раз';
+      tryAgainButton.onclick = () => {
+        hintMessageElement.style.display = 'none';
+        gameState = 'selecting';
+        showNumberSelection();
+      };
+      hintMessageElement.appendChild(tryAgainButton);
+    }
+    
+    // Сброс игры
+    function resetGame() {
+      applesCollected = 0;
+      currentCount = 0;
+      incorrectAttempts = 0;
+      gameState = 'collecting';
+      
+      // Сброс UI
+      successMessageElement.style.display = 'none';
+      hintMessageElement.style.display = 'none';
+      numberSelectionElement.style.display = 'none';
+      counterElement.style.display = 'none';
+      
+      // Инициализация новых яблок
+      initializeApples();
+    }
+    
+    // Инициализация игры
+    function initGame() {
+      // Установка положения ежика
+      hedgehogPosition = window.innerWidth / 2;
+      hedgehogContainer.style.left = `${hedgehogPosition}px`;
+      
+      // Инициализация яблок
+      initializeApples();
+      
+      // Запуск фоновой музыки при клике на страницу
+      document.addEventListener('click', () => {
+        if (backgroundMusic.paused) {
+          backgroundMusic.play().catch(e => console.log('Auto-play prevented:', e));
+        }
+      }, { once: true });
+    }
+    
+    // Запуск игры
+    initGame();
+    
+    // Обработка изменения размера окна
+    window.addEventListener('resize', () => {
+      // Повторная инициализация при изменении размера
+      initGame();
+    });
+  </script>
+</body>
+</html>
