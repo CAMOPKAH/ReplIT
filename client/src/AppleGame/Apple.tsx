@@ -121,13 +121,11 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
     top: `${fallingPosition.y}px`,
     transform: `rotate(${rotation}deg)`,
     pointerEvents: collected ? 'none' as const : 'auto' as const,
-    // Make landed apples overlap properly in the basket
-    zIndex: hasLanded ? (Math.floor(fallingPosition.y) % 5) + 10 : 5,
-    // Make apples slightly smaller when in basket
-    width: hasLanded ? '30px' : '40px',
-    height: hasLanded ? '30px' : '40px',
-    // Add shadow to apples for depth
-    filter: hasLanded ? 'drop-shadow(2px 2px 2px rgba(0,0,0,0.2))' : 'none',
+    zIndex: 5,
+    width: '40px',
+    height: '40px',
+    opacity: hasLanded ? 0 : 1, // Fade out when it falls off screen
+    transition: hasLanded ? 'opacity 0.3s' : 'none',
   };
 
   return (
