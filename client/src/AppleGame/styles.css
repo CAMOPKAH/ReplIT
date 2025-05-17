@@ -44,8 +44,8 @@
   max-height: 800px;
   position: relative;
   transform-origin: center bottom;
-  transform: scale(1.8);
-  margin-top: 30px;
+  transform: scale(1.2);
+  margin-top: 20px;
 }
 
 .apple {
