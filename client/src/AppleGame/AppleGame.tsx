@@ -110,7 +110,7 @@ const AppleGame = () => {
       {gameState === 'success' && (
         <div className="success-screen">
           <h1>Молодец!</h1>
-          <p>Ты правильно посчитал яблоки!</p>
+          <p>Ты правильно посчитал, сколько яблок собрал ёжик!</p>
           <div className="success-count">
             <div className="success-number">{applesCollected}</div>
             <div className="success-apples">
