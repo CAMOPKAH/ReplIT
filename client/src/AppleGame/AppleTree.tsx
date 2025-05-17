@@ -43,27 +43,27 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       
-      // Define foliage circles from the SVG for validation (adjusted for scaled-down tree)
+      // Define foliage ellipses from the isometric SVG for validation
       const foliageCircles = [
-        { cx: 350, cy: 200, r: 40 },   // Left upper foliage
-        { cx: 375, cy: 170, r: 45 },   // Left-top foliage
-        { cx: 400, cy: 160, r: 50 },   // Top center foliage
-        { cx: 425, cy: 170, r: 45 },   // Right-top foliage
-        { cx: 450, cy: 200, r: 40 },   // Right upper foliage
-        { cx: 385, cy: 190, r: 45 },   // Left-center foliage
-        { cx: 415, cy: 190, r: 45 },   // Right-center foliage
+        { cx: 275, cy: 200, r: 42 },   // Top left foliage
+        { cx: 340, cy: 150, r: 50 },   // Left-top foliage
+        { cx: 400, cy: 130, r: 60 },   // Top center foliage
+        { cx: 460, cy: 150, r: 50 },   // Right-top foliage
+        { cx: 525, cy: 200, r: 42 },   // Top right foliage
       ];
       
-      // Starting positions for the crown/top of the tree (adjusted for scaled-down tree)
+      // Starting positions for the crown/top of the tree in isometric view
       const topCrownPositions = [
-        { x: 350, y: 150 },  // Left upper crown
-        { x: 375, y: 130 },  // Left-top crown
-        { x: 400, y: 120 },  // Top center crown
-        { x: 425, y: 130 },  // Right-top crown
-        { x: 450, y: 150 },  // Right upper crown
-        { x: 385, y: 160 },  // Upper center-left crown
-        { x: 415, y: 160 },  // Upper center-right crown
-        { x: 400, y: 140 },  // Top-center crown
+        { x: 275, y: 180 },  // Top left crown
+        { x: 340, y: 135 },   // Left-top crown
+        { x: 400, y: 115 },   // Top center crown
+        { x: 460, y: 135 },   // Right-top crown
+        { x: 525, y: 180 },   // Top right crown
+        { x: 350, y: 145 },   // Upper left-center crown
+        { x: 380, y: 125 },   // Left of top-center crown
+        { x: 420, y: 125 },   // Right of top-center crown
+        { x: 450, y: 145 },   // Upper right-center crown
+        { x: 400, y: 130 },   // Top-center crown
       ];
       
       // Function to check if a point is inside any of the foliage circles
@@ -94,6 +94,11 @@ const AppleTree: React.FC<AppleTreeProps> = ({
         // Try up to 5 times to find a valid position in green foliage
         while (!validApplePosition && attempts < 5) {
           const basePosition = shuffledPositions[index % shuffledPositions.length];
+          
+          // Check if basePosition.y exists (handle possible undefined)
+          if (basePosition.y === undefined) {
+            continue; // Skip this attempt if position is malformed
+          }
           
           // Use smaller random offsets to stay more likely within green area
           const randomOffsetX = Math.random() * 20 - 10;
@@ -211,7 +216,7 @@ const AppleTree: React.FC<AppleTreeProps> = ({
 
   return (
     <div ref={containerRef} className="tree-container">
-      <img src="/assets/appletree.svg" alt="Apple Tree" className="tree-svg" />
+      <img src="/assets/isometric-tree.svg" alt="Apple Tree" className="tree-svg" />
       
       {/* Render apples */}
       {apples.map(apple => (
