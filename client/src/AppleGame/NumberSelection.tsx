@@ -28,7 +28,7 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
     
     // Speak initial prompt after a brief delay
     const timer = setTimeout(() => {
-      setPromptMessage("Сколько яблок в корзине?");
+      setPromptMessage("Сколько яблок собрал ёжик?");
     }, 500);
     
     return () => clearTimeout(timer);
