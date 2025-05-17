@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Banana body -->
+  <path d="M75,30 C60,15 40,20 25,30 C15,37 10,50 15,65 C20,80 35,85 50,80 C65,75 80,60 85,45 C90,30 85,40 75,30 Z" fill="#FFEB3B"/>
+  
+  <!-- Banana shadow -->
+  <path d="M75,30 C60,15 40,20 25,30 C15,37 10,50 15,65 C20,80 35,85 50,80 C65,75 80,60 85,45 C90,30 85,40 75,30 Z" fill="#FBC02D" opacity="0.3"/>
+  
+  <!-- Banana stem -->
+  <path d="M75,30 C78,28 80,25 82,22 C84,19 80,18 77,20 C74,22 72,25 70,28" fill="#795548"/>
+  
+  <!-- Banana spots -->
+  <circle cx="30" cy="40" r="2" fill="#795548" opacity="0.3"/>
+  <circle cx="45" cy="45" r="1.5" fill="#795548" opacity="0.3"/>
+  <circle cx="60" cy="55" r="2" fill="#795548" opacity="0.3"/>
+  <circle cx="40" cy="65" r="1.5" fill="#795548" opacity="0.3"/>
+  
+  <!-- Highlight -->
+  <path d="M30,35 C40,30 50,30 60,35 C70,40 75,50 70,60 C65,68 55,70 45,67 C35,64 25,55 25,45 C25,40 25,38 30,35 Z" fill="#FFF9C4" opacity="0.4"/>
+</svg>
