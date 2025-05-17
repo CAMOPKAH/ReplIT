@@ -9,8 +9,9 @@ import './styles.css';
 const AppleGame = () => {
   const [gameState, setGameState] = useState<GameState>('collecting');
   const [applesCollected, setApplesCollected] = useState<number>(0);
-  const [maxApples, setMaxApples] = useState<number>(5); // Default, can be adjusted for difficulty levels
+  const [maxApples, setMaxApples] = useState<number>(1); // Start with just 1 apple for easiest difficulty
   const [incorrectAttempts, setIncorrectAttempts] = useState<number>(0);
+  const [correctAnswerStreak, setCorrectAnswerStreak] = useState<number>(0);
   const { toggleMute, isMuted } = useAudio();
 
   // When all apples are collected, transition to the number selection phase
@@ -33,6 +34,9 @@ const AppleGame = () => {
       // Correct number selected
       setGameState('success');
       
+      // Increment correct answer streak
+      setCorrectAnswerStreak(prev => prev + 1);
+      
       // Reset for next round after a delay
       setTimeout(() => {
         resetGame();
@@ -40,14 +44,29 @@ const AppleGame = () => {
     } else {
       // Incorrect number selected
       setIncorrectAttempts(prev => prev + 1);
+      
+      // Reset streak on incorrect answer
+      setCorrectAnswerStreak(0);
     }
   };
+
+  // Handle difficulty progression
+  useEffect(() => {
+    // If player has 3 correct answers in a row, increase difficulty
+    if (correctAnswerStreak >= 3) {
+      // Increase difficulty by adding one more apple (max 10)
+      setMaxApples(prev => Math.min(prev + 1, 10));
+      
+      // Reset streak counter
+      setCorrectAnswerStreak(0);
+    }
+  }, [correctAnswerStreak]);
 
   const resetGame = () => {
     setGameState('collecting');
     setApplesCollected(0);
     setIncorrectAttempts(0);
-    // Could adjust difficulty here by changing maxApples
+    // Difficulty is now handled by the correctAnswerStreak effect
   };
 
   // Messages to be spoken in different game states

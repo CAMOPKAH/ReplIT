@@ -26,39 +26,49 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   const [basketPosition, setBasketPosition] = useState({ x: 0 });
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [countVisible, setCountVisible] = useState<boolean>(false);
+  const [fallingAppleX, setFallingAppleX] = useState<number | undefined>(undefined);
+  const [isAppleFalling, setIsAppleFalling] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { playHit } = useAudio();
 
-  // Define fixed apple positions on tree branches
+  // Define fixed apple positions on the green parts of the tree
   useEffect(() => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
-      const containerHeight = containerRef.current.clientHeight * 0.7; // Place apples on upper 70% of tree
       
-      // Fixed positions that look like apples hanging from branches
-      const fixedPositions = [
-        { x: 260, y: 250 },   // Left side branches
-        { x: 290, y: 180 },
-        { x: 320, y: 170 },
-        { x: 370, y: 150 },   // Middle branches
-        { x: 450, y: 140 },
-        { x: 510, y: 180 },   // Right side branches
-        { x: 550, y: 220 },
-        { x: 270, y: 270 },
-        { x: 320, y: 240 },
-        { x: 480, y: 240 },
+      // Fixed positions that are guaranteed to be on the green foliage
+      // These coordinates match the center points of the tree foliage circles in the SVG
+      const foliagePositions = [
+        { x: 280, y: 230 },  // Left lower foliage
+        { x: 330, y: 170 },  // Left upper foliage
+        { x: 400, y: 150 },  // Top center foliage
+        { x: 470, y: 170 },  // Right upper foliage
+        { x: 520, y: 230 },  // Right lower foliage
+        { x: 300, y: 250 },  // Left middle foliage
+        { x: 500, y: 250 },  // Right middle foliage
+        { x: 350, y: 200 },  // Left-center foliage
+        { x: 450, y: 200 },  // Right-center foliage
+        { x: 380, y: 180 },  // Upper-center extra position
       ];
       
       // Use only the number of positions we need for the current maxApples setting
       const applePositions: ApplePosition[] = [];
       
-      for (let index = 0; index < Math.min(maxApples, fixedPositions.length); index++) {
-        const position = fixedPositions[index];
+      // Shuffle the positions to make it more interesting
+      const shuffledPositions = [...foliagePositions].sort(() => Math.random() - 0.5);
+      
+      for (let index = 0; index < Math.min(maxApples, shuffledPositions.length); index++) {
+        // Add slight randomness within the foliage circle
+        const basePosition = shuffledPositions[index];
+        
+        // Add small random offsets (±15px) to make apples not all at the center of foliage
+        const randomOffsetX = Math.random() * 30 - 15;
+        const randomOffsetY = Math.random() * 30 - 15;
         
         applePositions.push({
           id: index,
-          x: position.x,
-          y: position.y,
+          x: basePosition.x + randomOffsetX,
+          y: basePosition.y + randomOffsetY,
           collected: false
         });
       }
@@ -74,6 +84,15 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   const handleAppleClick = (id: number) => {
     if (applesCollected >= maxApples) return;
     
+    // Find the clicked apple to get its position
+    const clickedApple = apples.find(apple => apple.id === id);
+    if (!clickedApple) return;
+    
+    // Set the falling apple coordinates for basket to follow
+    setFallingAppleX(clickedApple.x);
+    setIsAppleFalling(true);
+    
+    // Mark apple as collected
     setApples(prev => prev.map(apple => 
       apple.id === id ? { ...apple, collected: true } : apple
     ));
@@ -87,10 +106,12 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     // Trigger parent callback
     onAppleCollected();
     
-    // Hide counter after a short delay
+    // Hide counter and reset falling state after a delay
     setTimeout(() => {
       setCountVisible(false);
-    }, 1000);
+      setIsAppleFalling(false);
+      setFallingAppleX(undefined);
+    }, 1500);
   };
 
   return (
@@ -107,8 +128,12 @@ const AppleTree: React.FC<AppleTreeProps> = ({
         />
       ))}
       
-      {/* Basket at the bottom */}
-      <Basket position={basketPosition} />
+      {/* Basket at the bottom - now follows falling apples */}
+      <Basket 
+        position={basketPosition} 
+        followFallingApple={isAppleFalling}
+        fallingAppleX={fallingAppleX}
+      />
       
       {/* Number counter */}
       {countVisible && (
