@@ -1,0 +1,20 @@
+<svg width="150" height="80" viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Basket base -->
+  <ellipse cx="75" cy="70" rx="70" ry="10" fill="#8B4513" />
+  
+  <!-- Basket front -->
+  <path d="M5 40 C5 60 145 60 145 40 L135 70 C135 70 15 70 15 70 Z" fill="#D2B48C" />
+  
+  <!-- Basket top rim -->
+  <path d="M5 40 C5 30 145 30 145 40" fill="none" stroke="#8B4513" stroke-width="3" />
+  
+  <!-- Basket handle -->
+  <path d="M30 35 C30 10 120 10 120 35" fill="none" stroke="#8B4513" stroke-width="3" />
+  
+  <!-- Basket weave details -->
+  <path d="M15 45 L135 45" stroke="#A0522D" stroke-width="1" />
+  <path d="M15 50 L135 50" stroke="#A0522D" stroke-width="1" />
+  <path d="M15 55 L135 55" stroke="#A0522D" stroke-width="1" />
+  <path d="M15 60 L135 60" stroke="#A0522D" stroke-width="1" />
+  <path d="M15 65 L135 65" stroke="#A0522D" stroke-width="1" />
+</svg>
