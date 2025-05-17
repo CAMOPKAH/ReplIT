@@ -88,9 +88,30 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   useEffect(() => {
     if (appleInAir) {
       // Move hedgehog to catch the apple
-      setHedgehogPosition(appleInAir.x - 75); // Center hedgehog under apple
+      // Hedgehog runs to the apple's position
+      const moveHedgehogInterval = setInterval(() => {
+        // Calculate the target position (center of hedgehog should be under the apple)
+        const targetX = appleInAir.x - 75;
+        
+        // Current position
+        setHedgehogPosition(prev => {
+          // Determine direction and speed
+          const distanceToTarget = targetX - prev;
+          const direction = Math.sign(distanceToTarget);
+          // Move faster if further away
+          const speed = Math.min(Math.abs(distanceToTarget), 15);
+          
+          // If very close to target, snap to it
+          if (Math.abs(distanceToTarget) < 5) {
+            return targetX;
+          }
+          
+          // Otherwise move towards it
+          return prev + (direction * speed);
+        });
+      }, 30);
       
-      // Show eating animation after apple reaches the hedgehog
+      // Show eating animation after apple reaches the hedgehog (at around bottom of screen)
       const eatTimer = setTimeout(() => {
         setIsHedgehogEating(true);
         // Play nyam sound when hedgehog eats an apple
@@ -101,11 +122,14 @@ const AppleTree: React.FC<AppleTreeProps> = ({
           setIsHedgehogEating(false);
           setAppleInAir(null);
         }, 500);
-      }, 1000); // Timing adjusted to match apple fall animation
+      }, 900); // Slightly shorter timing for better synchronization with fall animation
       
-      return () => clearTimeout(eatTimer);
+      return () => {
+        clearTimeout(eatTimer);
+        clearInterval(moveHedgehogInterval);
+      };
     }
-  }, [appleInAir]);
+  }, [appleInAir, playNyam]);
   
   // Handle apple collection
   const handleAppleClick = (id: number) => {

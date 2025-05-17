@@ -46,12 +46,12 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Define where apples should fall to (bottom of screen)
-      const groundLevel = viewportHeight + 50; // Below the visible area
+      // Define where apples should fall to (near bottom of screen, at hedgehog level)
+      const hedgehogLevel = viewportHeight - 120; // Approx. where hedgehog is
       const centerX = viewportWidth / 2;
       
       // Add randomness to where apples fall
-      const randomOffsetX = (Math.random() - 0.5) * 100; // Random ±50px from center
+      const randomOffsetX = (Math.random() - 0.5) * 150; // Random ±75px from center
       const targetX = centerX + randomOffsetX;
       
       const animate = () => {
@@ -75,24 +75,24 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
           // Apply rotation during falling
           setRotation(prev => prev + rotationSpeed);
           
-          // If apple has fallen below screen, mark it as "landed" and hide it
-          if (newY >= groundLevel) {
+          // If apple has reached hedgehog level, mark it as "landed"
+          if (newY >= hedgehogLevel) {
             if (!hasLanded) {
               setHasLanded(true);
-              // When the apple exits the screen, we don't need to track it anymore
+              // When the apple reaches the hedgehog, we don't need to track it anymore
               if (intervalRef.current) {
                 cancelAnimationFrame(intervalRef.current);
                 intervalRef.current = null;
               }
             }
-            // Keep it off-screen
-            newY = groundLevel;
+            // Keep it at hedgehog level
+            newY = hedgehogLevel;
           }
           
           return { x: newX, y: newY };
         });
         
-        // Continue animation until apple is off-screen
+        // Continue animation until apple reaches hedgehog level
         if (!hasLanded && intervalRef.current) {
           intervalRef.current = requestAnimationFrame(animate);
         }
