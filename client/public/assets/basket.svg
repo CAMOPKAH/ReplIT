@@ -1,26 +1,35 @@
-<svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+<svg width="250" height="160" viewBox="0 0 250 160" xmlns="http://www.w3.org/2000/svg">
   <!-- Basket base -->
-  <ellipse cx="100" cy="105" rx="95" ry="15" fill="#8B4513" />
+  <ellipse cx="125" cy="140" rx="120" ry="18" fill="#8B4513" />
   
-  <!-- Basket front -->
-  <path d="M5 60 C5 90 195 90 195 60 L185 105 C185 105 15 105 15 105 Z" fill="#D2B48C" />
+  <!-- Basket interior (where apples will accumulate) -->
+  <path d="M25 70 C25 120 225 120 225 70 L215 140 C215 140 35 140 35 140 Z" fill="#FFF5E1" />
   
-  <!-- Basket top rim -->
-  <path d="M5 60 C5 45 195 45 195 60" fill="none" stroke="#8B4513" stroke-width="4" />
+  <!-- Basket rim and edges -->
+  <path d="M25 70 C25 120 225 120 225 70" fill="none" stroke="#8B4513" stroke-width="5" />
+  <path d="M25 70 L35 140" fill="none" stroke="#8B4513" stroke-width="4" />
+  <path d="M225 70 L215 140" fill="none" stroke="#8B4513" stroke-width="4" />
   
   <!-- Basket handle -->
-  <path d="M40 55 C40 20 160 20 160 55" fill="none" stroke="#8B4513" stroke-width="4" />
+  <path d="M50 65 C50 25 200 25 200 65" fill="none" stroke="#8B4513" stroke-width="5" />
   
-  <!-- Basket weave details -->
-  <path d="M15 65 L185 65" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 70 L185 70" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 75 L185 75" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 80 L185 80" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 85 L185 85" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 90 L185 90" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 95 L185 95" stroke="#A0522D" stroke-width="1.5" />
-  <path d="M15 100 L185 100" stroke="#A0522D" stroke-width="1.5" />
+  <!-- Basket weave details - horizontal lines -->
+  <path d="M30 80 L220 80" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M30 90 L220 90" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M30 100 L220 100" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M30 110 L220 110" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M30 120 L220 120" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M30 130 L220 130" stroke="#A0522D" stroke-width="1.5" />
+  
+  <!-- Basket weave details - vertical lines -->
+  <path d="M50 70 L45 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M75 70 L70 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M100 70 L100 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M125 70 L125 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M150 70 L155 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M175 70 L180 140" stroke="#A0522D" stroke-width="1.5" />
+  <path d="M200 70 L205 140" stroke="#A0522D" stroke-width="1.5" />
   
   <!-- Counter circle placeholder (the actual number will be added in the component) -->
-  <circle cx="100" cy="35" r="20" fill="white" stroke="#8B4513" stroke-width="3" />
+  <circle cx="125" cy="35" r="22" fill="white" stroke="#8B4513" stroke-width="3" />
 </svg>

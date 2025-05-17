@@ -50,8 +50,8 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       
       // The basket's position
       const basketTop = viewportHeight * 0.75;
-      const basketWidth = 200; // Updated to match the new basket width
-      const basketHeight = 120; // Height of the basket
+      const basketWidth = 250; // Updated to match the new wider basket
+      const basketHeight = 160; // Updated height of the basket
       const basketCenterX = viewportWidth / 2;
       const basketLeft = basketCenterX - basketWidth / 2;
       const basketRight = basketLeft + basketWidth;
@@ -60,12 +60,12 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       // This will be where the apple ends up - randomly distributed in the basket
       // We adjust the Y position based on a logical "stack" of apples
       // Basket bottom is the lowest point where apples can rest
-      const basketBottomY = basketTop - 20; // Inside basket area
+      const basketBottomY = basketTop - 25; // Deeper inside basket area
       
       // Calculate random position within basket
       // Distribute apples across the basket width horizontally
       // Give more randomness to make it look natural
-      const basketInteriorWidth = basketWidth * 0.8; // Use 80% of basket width for apple placement
+      const basketInteriorWidth = basketWidth * 0.7; // Use 70% of basket width for apple placement
       const randomOffsetX = (Math.random() * basketInteriorWidth) - (basketInteriorWidth / 2); 
       const finalRestX = basketCenterX + randomOffsetX;
       
@@ -159,9 +159,13 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
     top: `${fallingPosition.y}px`,
     transform: `rotate(${rotation}deg)`,
     pointerEvents: collected ? 'none' as const : 'auto' as const,
-    zIndex: hasLanded ? 10 : 5, // Ensure landed apples are visible in the basket
-    width: hasLanded ? '30px' : '40px', // Make apples slightly smaller when in basket
+    // Make landed apples overlap properly in the basket
+    zIndex: hasLanded ? (Math.floor(fallingPosition.y) % 5) + 10 : 5,
+    // Make apples slightly smaller when in basket
+    width: hasLanded ? '30px' : '40px',
     height: hasLanded ? '30px' : '40px',
+    // Add shadow to apples for depth
+    filter: hasLanded ? 'drop-shadow(2px 2px 2px rgba(0,0,0,0.2))' : 'none',
   };
 
   return (
