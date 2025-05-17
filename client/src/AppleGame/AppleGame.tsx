@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
 import AppleTree from './AppleTree';
 import NumberSelection from './NumberSelection';
+import AudioManager from './AudioManager';
 import { GameState } from './GameStates';
 import './styles.css';
 
@@ -49,6 +50,12 @@ const AppleGame = () => {
     // Could adjust difficulty here by changing maxApples
   };
 
+  // Messages to be spoken in different game states
+  const gameMessages = {
+    success: "Молодец! Ты правильно посчитал яблоки!",
+    start: "Собери яблоки с дерева!"
+  };
+
   return (
     <div className="apple-game">
       <button onClick={toggleMute} className="sound-button">
@@ -56,11 +63,20 @@ const AppleGame = () => {
       </button>
       
       {gameState === 'collecting' && (
-        <AppleTree 
-          maxApples={maxApples} 
-          onAppleCollected={handleAppleCollected}
-          applesCollected={applesCollected}
-        />
+        <>
+          <AppleTree 
+            maxApples={maxApples} 
+            onAppleCollected={handleAppleCollected}
+            applesCollected={applesCollected}
+          />
+          {/* Initial instruction audio */}
+          {applesCollected === 0 && (
+            <AudioManager 
+              currentCount={0}
+              message={gameMessages.start}
+            />
+          )}
+        </>
       )}
       
       {gameState === 'selecting' && (
@@ -94,6 +110,12 @@ const AppleGame = () => {
               ))}
             </div>
           </div>
+          {/* Success message audio */}
+          <AudioManager 
+            currentCount={0}
+            isCorrectAnswer={true}
+            message={gameMessages.success}
+          />
         </div>
       )}
     </div>

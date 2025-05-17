@@ -1,114 +1,142 @@
 import { useEffect, useRef } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
 
-interface AudioData {
-  count1: HTMLAudioElement | null;
-  count2: HTMLAudioElement | null;
-  count3: HTMLAudioElement | null;
-  count4: HTMLAudioElement | null;
-  count5: HTMLAudioElement | null;
-  count6: HTMLAudioElement | null;
-  count7: HTMLAudioElement | null;
-  count8: HTMLAudioElement | null;
-  count9: HTMLAudioElement | null;
-  count10: HTMLAudioElement | null;
-  correct: HTMLAudioElement | null;
-  wrong: HTMLAudioElement | null;
-}
-
 interface AudioManagerProps {
   currentCount: number;
   isCorrectAnswer?: boolean;
   isWrongAnswer?: boolean;
+  message?: string;
 }
 
-// Component to handle all audio playback in the game
+// Component to handle all audio playback in the game using Speech Synthesis
 const AudioManager: React.FC<AudioManagerProps> = ({ 
   currentCount, 
   isCorrectAnswer = false,
-  isWrongAnswer = false
+  isWrongAnswer = false,
+  message
 }) => {
-  const audioRef = useRef<AudioData>({
-    count1: null,
-    count2: null,
-    count3: null,
-    count4: null,
-    count5: null,
-    count6: null,
-    count7: null,
-    count8: null,
-    count9: null,
-    count10: null,
-    correct: null,
-    wrong: null
-  });
-  
   const { isMuted } = useAudio();
   const lastPlayedCountRef = useRef<number>(0);
+  const synth = useRef<SpeechSynthesis | null>(null);
+  const voices = useRef<SpeechSynthesisVoice[]>([]);
   
-  // Load audio objects on component mount
+  // Initialize speech synthesis
   useEffect(() => {
-    // In a real application, we would load actual voice recordings
-    // Here we're simulating with existing sounds
-    const createAudio = (src: string): HTMLAudioElement => {
-      const audio = new Audio(src);
-      audio.preload = 'auto';
-      return audio;
-    };
-    
-    // Setup number counting audio
-    audioRef.current = {
-      count1: createAudio('/sounds/hit.mp3'),
-      count2: createAudio('/sounds/hit.mp3'),
-      count3: createAudio('/sounds/hit.mp3'),
-      count4: createAudio('/sounds/hit.mp3'),
-      count5: createAudio('/sounds/hit.mp3'),
-      count6: createAudio('/sounds/hit.mp3'),
-      count7: createAudio('/sounds/hit.mp3'),
-      count8: createAudio('/sounds/hit.mp3'),
-      count9: createAudio('/sounds/hit.mp3'),
-      count10: createAudio('/sounds/hit.mp3'),
-      correct: createAudio('/sounds/success.mp3'),
-      wrong: createAudio('/sounds/hit.mp3'),
-    };
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      synth.current = window.speechSynthesis;
+      
+      // Load available voices
+      const loadVoices = () => {
+        const availableVoices = synth.current?.getVoices() || [];
+        
+        // Find Russian voice for the counting
+        const russianVoice = availableVoices.find(voice => 
+          voice.lang.includes('ru') || voice.name.includes('Russian')
+        );
+        
+        if (russianVoice) {
+          voices.current = [russianVoice];
+        } else {
+          // Use default voice if Russian not available
+          voices.current = availableVoices;
+        }
+      };
+      
+      // Chrome needs to wait for voices to be loaded
+      if (synth.current.onvoiceschanged !== undefined) {
+        synth.current.onvoiceschanged = loadVoices;
+      }
+      
+      loadVoices();
+    }
     
     // Clean up on unmount
     return () => {
-      Object.values(audioRef.current).forEach(audio => {
-        if (audio) {
-          audio.pause();
-          audio.src = '';
-        }
-      });
+      if (synth.current) {
+        synth.current.cancel();
+      }
     };
   }, []);
   
+  // Function to speak text
+  const speak = (text: string, rate = 1, pitch = 1) => {
+    if (synth.current && !isMuted) {
+      // Cancel any ongoing speech
+      synth.current.cancel();
+      
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Set voice (prefer Russian if available)
+      if (voices.current.length > 0) {
+        utterance.voice = voices.current[0];
+      }
+      
+      utterance.rate = rate;
+      utterance.pitch = pitch;
+      utterance.volume = 1;
+      
+      synth.current.speak(utterance);
+    }
+  };
+  
+  // Convert number to Russian word for counting
+  const getCountText = (num: number): string => {
+    const russianNumbers = [
+      'Один', 'Два', 'Три', 'Четыре', 'Пять', 
+      'Шесть', 'Семь', 'Восемь', 'Девять', 'Десять'
+    ];
+    
+    if (num >= 1 && num <= 10) {
+      return russianNumbers[num - 1] + '!';
+    }
+    return num.toString();
+  };
+  
   // Play counting sounds when the count changes
   useEffect(() => {
-    if (isMuted) return;
+    if (isMuted || !synth.current) return;
     
     if (currentCount > 0 && currentCount <= 10 && currentCount !== lastPlayedCountRef.current) {
-      const countAudio = audioRef.current[`count${currentCount}` as keyof AudioData];
-      if (countAudio) {
-        countAudio.currentTime = 0;
-        countAudio.play().catch(err => console.error('Audio play error:', err));
-        lastPlayedCountRef.current = currentCount;
-      }
+      speak(getCountText(currentCount), 1.1, 1.2); // Slightly faster rate for counting
+      lastPlayedCountRef.current = currentCount;
+      
+      // Also play the regular sound
+      const audio = new Audio('/sounds/hit.mp3');
+      audio.volume = 0.3; // Lower volume to avoid overlapping with speech
+      audio.play().catch(err => console.error('Audio play error:', err));
     }
   }, [currentCount, isMuted]);
   
-  // Play feedback sounds for correct/wrong answers
+  // Play feedback sounds and speech for correct/wrong answers
   useEffect(() => {
-    if (isMuted) return;
+    if (isMuted || !synth.current) return;
     
-    if (isCorrectAnswer && audioRef.current.correct) {
-      audioRef.current.correct.currentTime = 0;
-      audioRef.current.correct.play().catch(err => console.error('Audio play error:', err));
-    } else if (isWrongAnswer && audioRef.current.wrong) {
-      audioRef.current.wrong.currentTime = 0;
-      audioRef.current.wrong.play().catch(err => console.error('Audio play error:', err));
+    if (isCorrectAnswer) {
+      const audio = new Audio('/sounds/success.mp3');
+      audio.volume = 0.4;
+      audio.play().catch(err => console.error('Audio play error:', err));
+      
+      // Congratulatory message
+      setTimeout(() => {
+        speak('Молодец! Правильно!', 0.9, 1.1);
+      }, 500);
+    } else if (isWrongAnswer) {
+      const audio = new Audio('/sounds/hit.mp3');
+      audio.play().catch(err => console.error('Audio play error:', err));
+      
+      // Try again message
+      setTimeout(() => {
+        speak('Попробуй еще раз!', 0.9, 1);
+      }, 300);
     }
   }, [isCorrectAnswer, isWrongAnswer, isMuted]);
+  
+  // Speak any provided message
+  useEffect(() => {
+    if (message && !isMuted && synth.current) {
+      speak(message, 0.9, 1);
+    }
+  }, [message, isMuted]);
   
   // This component doesn't render anything, it just manages audio
   return null;

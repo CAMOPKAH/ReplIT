@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
+import AudioManager from './AudioManager';
 
 interface NumberSelectionProps {
   correctNumber: number;
@@ -16,19 +17,37 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
 }) => {
   const [numbers, setNumbers] = useState<number[]>([]);
   const [showHint, setShowHint] = useState<boolean>(false);
+  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean>(false);
+  const [isWrongAnswer, setIsWrongAnswer] = useState<boolean>(false);
+  const [promptMessage, setPromptMessage] = useState<string>("Сколько яблок в корзине?");
   const { playSuccess, playHit } = useAudio();
   
   // Generate number options for selection
   useEffect(() => {
     generateNumberOptions();
+    
+    // Speak initial prompt after a brief delay
+    const timer = setTimeout(() => {
+      setPromptMessage("Сколько яблок в корзине?");
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, [correctNumber]);
   
   // Show hint after 2 incorrect attempts
   useEffect(() => {
     if (incorrectAttempts >= 2) {
       setShowHint(true);
+      
+      // Reset wrong answer state to prevent multiple audio playbacks
+      setIsWrongAnswer(false);
+      
+      // Set hint message with delay to allow previous speech to finish
+      setTimeout(() => {
+        setPromptMessage(`Посмотри на корзину: там ${correctNumber} яблок${correctNumber > 1 ? 'а' : ''}. Давай попробуем ещё раз!`);
+      }, 500);
     }
-  }, [incorrectAttempts]);
+  }, [incorrectAttempts, correctNumber]);
   
   const generateNumberOptions = () => {
     // Always include the correct number
@@ -54,11 +73,20 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
   };
   
   const handleNumberClick = (number: number) => {
+    // Reset states
+    setIsCorrectAnswer(false);
+    setIsWrongAnswer(false);
+    
+    // Set new states based on selection
     if (number === correctNumber) {
+      setIsCorrectAnswer(true);
       playSuccess();
     } else {
+      setIsWrongAnswer(true);
       playHit(); // Using hit sound for incorrect answers
     }
+    
+    // Notify parent component
     onNumberSelected(number);
   };
   
@@ -101,7 +129,7 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
         </div>
       </div>
 
-      <h2 className="prompt">Сколько яблок в корзине?</h2>
+      <h2 className="prompt">{promptMessage}</h2>
       
       <div className="numbers">
         {numbers.map(number => (
@@ -114,6 +142,14 @@ const NumberSelection: React.FC<NumberSelectionProps> = ({
           </button>
         ))}
       </div>
+      
+      {/* Audio manager for speech prompts */}
+      <AudioManager 
+        currentCount={0}
+        isCorrectAnswer={isCorrectAnswer}
+        isWrongAnswer={isWrongAnswer}
+        message={promptMessage}
+      />
     </div>
   );
 };

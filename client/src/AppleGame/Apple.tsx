@@ -37,29 +37,43 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       
       // Start the falling physics simulation
       let velocity = { x: 0, y: 0 };
-      let gravity = 0.5;
+      let gravity = 0.6;
       let bounce = 0.6;
-      let friction = 0.99;
+      let friction = 0.98;
       let rotationSpeed = Math.random() * 5 - 2.5;
+
+      // Calculate basket position more precisely
+      // We're targeting the center of the viewport horizontally
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
       
-      // The basket's approximate position - this will need to be adjusted
-      const basketTop = window.innerHeight * 0.85;
+      // The basket's position
+      const basketTop = viewportHeight * 0.75;
       const basketWidth = 150;
-      const basketLeft = window.innerWidth / 2 - basketWidth / 2;
+      const basketCenterX = viewportWidth / 2;
+      const basketLeft = basketCenterX - basketWidth / 2;
       const basketRight = basketLeft + basketWidth;
+      
+      // Slightly attract the apple toward the basket as it falls
+      const targetX = basketCenterX;
       
       const animate = () => {
         setFallingPosition(prev => {
-          // Update position based on velocity
-          let newX = prev.x + velocity.x;
-          let newY = prev.y + velocity.y;
+          // Add a slight attraction toward the basket center
+          const diffX = targetX - prev.x;
+          const attractionForce = diffX * 0.005; // Subtle force
           
-          // Add gravity effect
+          // Update velocity with gravity and attraction
+          velocity.x += attractionForce;
           velocity.y += gravity;
           
           // Apply air resistance
           velocity.x *= friction;
           velocity.y *= friction;
+          
+          // Update position based on velocity
+          let newX = prev.x + velocity.x;
+          let newY = prev.y + velocity.y;
           
           // Check for basket collision
           if (newY >= basketTop && newX >= basketLeft && newX <= basketRight) {
@@ -73,7 +87,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
               }
             } else {
               // Apple has come to rest in the basket
-              newY = basketTop - 5; // Rest slightly above the basket line
+              newY = basketTop - 10; // Rest slightly above the basket line
               velocity.y = 0;
               velocity.x = 0;
             }

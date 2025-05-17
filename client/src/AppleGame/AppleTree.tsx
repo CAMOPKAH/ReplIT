@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
 import Apple from './Apple';
 import Basket from './Basket';
+import AudioManager from './AudioManager';
 
 interface ApplePosition {
   id: number;
@@ -28,33 +29,36 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { playHit } = useAudio();
 
-  // Generate apple positions when component mounts
+  // Define fixed apple positions on tree branches
   useEffect(() => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       const containerHeight = containerRef.current.clientHeight * 0.7; // Place apples on upper 70% of tree
       
-      // Generate apple positions - randomized but ensuring they're visible on the tree
+      // Fixed positions that look like apples hanging from branches
+      const fixedPositions = [
+        { x: 260, y: 250 },   // Left side branches
+        { x: 290, y: 180 },
+        { x: 320, y: 170 },
+        { x: 370, y: 150 },   // Middle branches
+        { x: 450, y: 140 },
+        { x: 510, y: 180 },   // Right side branches
+        { x: 550, y: 220 },
+        { x: 270, y: 270 },
+        { x: 320, y: 240 },
+        { x: 480, y: 240 },
+      ];
+      
+      // Use only the number of positions we need for the current maxApples setting
       const applePositions: ApplePosition[] = [];
       
-      for (let index = 0; index < maxApples; index++) {
-        // Create a semi-random pattern that looks natural on the tree
-        const section = containerWidth / (maxApples + 1);
-        let x = section * (index + 1) + (Math.random() * 40 - 20); // Add some randomness
-        let y = 100 + Math.random() * (containerHeight - 150); // Keep apples within tree bounds
-        
-        // Ensure apples are not too close to each other
-        if (index > 0) {
-          const prevApple = applePositions[index - 1];
-          while (Math.abs(x - prevApple.x) < 50) {
-            x = section * (index + 1) + (Math.random() * 40 - 20);
-          }
-        }
+      for (let index = 0; index < Math.min(maxApples, fixedPositions.length); index++) {
+        const position = fixedPositions[index];
         
         applePositions.push({
           id: index,
-          x,
-          y,
+          x: position.x,
+          y: position.y,
           collected: false
         });
       }
@@ -110,6 +114,11 @@ const AppleTree: React.FC<AppleTreeProps> = ({
       {countVisible && (
         <div className="counter">{currentCount}</div>
       )}
+      
+      {/* Audio manager for counting sounds */}
+      <AudioManager 
+        currentCount={currentCount} 
+      />
     </div>
   );
 };
