@@ -97,15 +97,15 @@ const Basket: React.FC<BasketProps> = ({
   const getCounterStyle = (): React.CSSProperties => {
     return {
       position: 'absolute',
-      top: '20px',  // Positioned over the counter circle in the SVG
+      top: '25px',  // Positioned over the counter circle in the SVG
       left: '50%',
       transform: 'translateX(-50%)',
-      width: '44px',
-      height: '44px',
+      width: '50px',
+      height: '50px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '28px',
+      fontSize: '32px',
       fontWeight: 'bold',
       color: '#e74c3c',  // Red color for visibility
       zIndex: 20,
