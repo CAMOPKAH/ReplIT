@@ -76,7 +76,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
           // Apply rotation during falling
           setRotation(prev => prev + rotationSpeed);
           
-          // If apple has reached hedgehog level, mark it as "landed"
+          // If apple has reached hedgehog level, mark it as "landed" and make it disappear
           if (newY >= hedgehogLevel && newY < hedgehogBottomLevel) {
             if (!hasLanded) {
               setHasLanded(true);
@@ -85,9 +85,13 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
                 cancelAnimationFrame(intervalRef.current);
                 intervalRef.current = null;
               }
+              
+              // Make apple invisible immediately when it reaches hedgehog level
+              // This prevents it from appearing on the hedgehog's back
+              setTimeout(() => {
+                setFallingPosition(prev => ({ ...prev, y: hedgehogBottomLevel + 100 }));
+              }, 100);
             }
-            // Keep it at hedgehog level
-            newY = hedgehogLevel;
           }
           
           // If apple has fallen below hedgehog (past hedgehog), make it disappear
