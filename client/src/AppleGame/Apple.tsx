@@ -50,16 +50,28 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       
       // The basket's position
       const basketTop = viewportHeight * 0.75;
-      const basketWidth = 150;
+      const basketWidth = 200; // Updated to match the new basket width
+      const basketHeight = 120; // Height of the basket
       const basketCenterX = viewportWidth / 2;
       const basketLeft = basketCenterX - basketWidth / 2;
       const basketRight = basketLeft + basketWidth;
       
       // Calculate random final resting position within basket
       // This will be where the apple ends up - randomly distributed in the basket
-      const basketBottomY = basketTop - 10; // Slightly above basket line
-      const randomOffsetX = (Math.random() * basketWidth * 0.6) - (basketWidth * 0.3); // Within central 60% of basket
+      // We adjust the Y position based on a logical "stack" of apples
+      // Basket bottom is the lowest point where apples can rest
+      const basketBottomY = basketTop - 20; // Inside basket area
+      
+      // Calculate random position within basket
+      // Distribute apples across the basket width horizontally
+      // Give more randomness to make it look natural
+      const basketInteriorWidth = basketWidth * 0.8; // Use 80% of basket width for apple placement
+      const randomOffsetX = (Math.random() * basketInteriorWidth) - (basketInteriorWidth / 2); 
       const finalRestX = basketCenterX + randomOffsetX;
+      
+      // We'll make apples stack in a somewhat natural way by adding some randomness to their Y position
+      const randomOffsetY = Math.random() * 15; // Random vertical variance
+      const finalRestY = basketBottomY - randomOffsetY;
       
       // Slightly attract the apple toward the basket as it falls
       const targetX = basketCenterX;
@@ -94,7 +106,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
                 // Save final resting position for the apple in the basket
                 setFinalPosition({ 
                   x: finalRestX, 
-                  y: basketBottomY + (Math.random() * 5) // Small random Y variation
+                  y: finalRestY
                 });
               }
             } else {
@@ -148,6 +160,8 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
     transform: `rotate(${rotation}deg)`,
     pointerEvents: collected ? 'none' as const : 'auto' as const,
     zIndex: hasLanded ? 10 : 5, // Ensure landed apples are visible in the basket
+    width: hasLanded ? '30px' : '40px', // Make apples slightly smaller when in basket
+    height: hasLanded ? '30px' : '40px',
   };
 
   return (

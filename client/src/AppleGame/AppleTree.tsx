@@ -9,6 +9,8 @@ interface ApplePosition {
   x: number;
   y: number;
   collected: boolean;
+  finalX?: number; // Final X position in the basket after falling
+  finalY?: number; // Final Y position in the basket after falling
 }
 
 interface AppleTreeProps {
