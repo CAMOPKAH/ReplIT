@@ -38,44 +38,91 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     setNyamSound(nyamSound);
   }, [setNyamSound]);
 
-  // Define fixed apple positions on the green parts of the tree
+  // Define fixed apple positions on the green parts of the tree with validation
   useEffect(() => {
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       
-      // Fixed positions that are guaranteed to be on the crown/top of the tree only
-      // These coordinates match only the top part of tree foliage in the SVG
-      const foliagePositions = [
+      // Define foliage circles from the SVG for validation
+      const foliageCircles = [
+        { cx: 280, cy: 230, r: 50 },   // Left lower foliage
+        { cx: 330, cy: 170, r: 60 },   // Left upper foliage
+        { cx: 400, cy: 150, r: 70 },   // Top center foliage
+        { cx: 470, cy: 170, r: 60 },   // Right upper foliage
+        { cx: 520, cy: 230, r: 50 },   // Right lower foliage
+        { cx: 350, cy: 200, r: 65 },   // Left-center foliage
+        { cx: 450, cy: 200, r: 65 },   // Right-center foliage
+      ];
+      
+      // Starting positions that should be on the crown/top of the tree
+      const topCrownPositions = [
         { x: 330, y: 130 },  // Left upper crown
         { x: 360, y: 110 },  // Left-top crown
         { x: 400, y: 100 },  // Top center crown
         { x: 440, y: 110 },  // Right-top crown
         { x: 470, y: 130 },  // Right upper crown
-        { x: 350, y: 150 },  // Upper left-center crown
         { x: 380, y: 140 },  // Upper center-left crown
         { x: 420, y: 140 },  // Upper center-right crown
-        { x: 450, y: 150 },  // Upper right-center crown
         { x: 400, y: 125 },  // Top-center crown
       ];
+      
+      // Function to check if a point is inside any of the foliage circles
+      const isInGreenFoliage = (x: number, y: number): boolean => {
+        return foliageCircles.some(circle => {
+          // Calculate distance from point to circle center
+          const dx = x - circle.cx;
+          const dy = y - circle.cy;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          // Point is inside the circle if distance is less than radius
+          return distance < circle.r;
+        });
+      };
       
       // Use only the number of positions we need for the current maxApples setting
       const applePositions: ApplePosition[] = [];
       
       // Shuffle the positions to make it more interesting
-      const shuffledPositions = [...foliagePositions].sort(() => Math.random() - 0.5);
+      const shuffledPositions = [...topCrownPositions].sort(() => Math.random() - 0.5);
       
+      // Create apples with position validation
       for (let index = 0; index < Math.min(maxApples, shuffledPositions.length); index++) {
-        // Add slight randomness within the foliage circle
-        const basePosition = shuffledPositions[index];
+        let validApplePosition = false;
+        let finalX = 0, finalY = 0;
+        let attempts = 0;
         
-        // Add small random offsets (±15px) to make apples not all at the center of foliage
-        const randomOffsetX = Math.random() * 30 - 15;
-        const randomOffsetY = Math.random() * 30 - 15;
+        // Try up to 5 times to find a valid position in green foliage
+        while (!validApplePosition && attempts < 5) {
+          const basePosition = shuffledPositions[index % shuffledPositions.length];
+          
+          // Use smaller random offsets to stay more likely within green area
+          const randomOffsetX = Math.random() * 20 - 10;
+          const randomOffsetY = Math.random() * 20 - 10;
+          
+          const candidateX = basePosition.x + randomOffsetX;
+          const candidateY = basePosition.y + randomOffsetY;
+          
+          // Check if this position is in green foliage
+          if (isInGreenFoliage(candidateX, candidateY)) {
+            validApplePosition = true;
+            finalX = candidateX;
+            finalY = candidateY;
+          }
+          
+          attempts++;
+        }
+        
+        // If no valid position found after attempts, use a safe position at a foliage center
+        if (!validApplePosition) {
+          const safeCircle = foliageCircles[index % foliageCircles.length];
+          finalX = safeCircle.cx;
+          finalY = safeCircle.cy;
+        }
         
         applePositions.push({
           id: index,
-          x: basePosition.x + randomOffsetX,
-          y: basePosition.y + randomOffsetY,
+          x: finalX,
+          y: finalY,
           collected: false
         });
       }
