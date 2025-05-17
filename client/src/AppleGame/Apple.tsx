@@ -13,6 +13,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
   const [rotation, setRotation] = useState(0);
   const [isFalling, setIsFalling] = useState(false);
   const [hasLanded, setHasLanded] = useState(false);
+  const [finalPosition, setFinalPosition] = useState<{x: number, y: number} | null>(null);
   const intervalRef = useRef<number | null>(null);
 
   // Add subtle animations to the apples that haven't been collected
@@ -54,6 +55,12 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
       const basketLeft = basketCenterX - basketWidth / 2;
       const basketRight = basketLeft + basketWidth;
       
+      // Calculate random final resting position within basket
+      // This will be where the apple ends up - randomly distributed in the basket
+      const basketBottomY = basketTop - 10; // Slightly above basket line
+      const randomOffsetX = (Math.random() * basketWidth * 0.6) - (basketWidth * 0.3); // Within central 60% of basket
+      const finalRestX = basketCenterX + randomOffsetX;
+      
       // Slightly attract the apple toward the basket as it falls
       const targetX = basketCenterX;
       
@@ -84,10 +91,22 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
               
               if (Math.abs(velocity.y) < 2) {
                 setHasLanded(true);
+                // Save final resting position for the apple in the basket
+                setFinalPosition({ 
+                  x: finalRestX, 
+                  y: basketBottomY + (Math.random() * 5) // Small random Y variation
+                });
               }
             } else {
               // Apple has come to rest in the basket
-              newY = basketTop - 10; // Rest slightly above the basket line
+              // Gradually move toward final position
+              const restX = finalPosition?.x || newX;
+              const restY = finalPosition?.y || basketBottomY;
+              
+              // Slow down movement to final rest position
+              newX = newX + (restX - newX) * 0.1;
+              newY = restY;
+              
               velocity.y = 0;
               velocity.x = 0;
             }
@@ -99,8 +118,8 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
           return { x: newX, y: newY };
         });
         
-        // Continue animation if apple is still moving
-        if (!hasLanded) {
+        // Continue animation until it's fully settled
+        if (!hasLanded || (hasLanded && !finalPosition)) {
           intervalRef.current = requestAnimationFrame(animate);
         }
       };
@@ -113,7 +132,7 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
         cancelAnimationFrame(intervalRef.current);
       }
     };
-  }, [collected, isFalling, hasLanded]);
+  }, [collected, isFalling, hasLanded, finalPosition]);
 
   // Handle the click interaction
   const handleClick = () => {
@@ -122,18 +141,21 @@ const Apple: React.FC<AppleProps> = ({ position, collected, onClick }) => {
     }
   };
 
+  // Style for apples based on their state
+  const appleStyle: React.CSSProperties = {
+    left: `${fallingPosition.x}px`,
+    top: `${fallingPosition.y}px`,
+    transform: `rotate(${rotation}deg)`,
+    pointerEvents: collected ? 'none' as const : 'auto' as const,
+    zIndex: hasLanded ? 10 : 5, // Ensure landed apples are visible in the basket
+  };
+
   return (
     <img 
       src="/assets/apple.svg" 
       alt="Apple" 
       className={`apple ${isShaking ? 'shake' : ''} ${isFalling ? 'apple-falling' : ''}`}
-      style={{
-        left: `${fallingPosition.x}px`,
-        top: `${fallingPosition.y}px`,
-        transform: `rotate(${rotation}deg)`,
-        opacity: hasLanded ? 0 : 1, // Fade out after landing in basket
-        pointerEvents: collected ? 'none' : 'auto',
-      }}
+      style={appleStyle}
       onClick={handleClick}
     />
   );
