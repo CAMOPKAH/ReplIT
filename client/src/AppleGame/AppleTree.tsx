@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAudio } from '@/lib/stores/useAudio';
 import Apple from './Apple';
+import Hedgehog from './Hedgehog';
 import AudioManager from './AudioManager';
 
 interface ApplePosition {
@@ -24,6 +25,9 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   const [apples, setApples] = useState<ApplePosition[]>([]);
   const [currentCount, setCurrentCount] = useState<number>(0);
   const [countVisible, setCountVisible] = useState<boolean>(false);
+  const [hedgehogPosition, setHedgehogPosition] = useState(window.innerWidth / 2);
+  const [isHedgehogEating, setIsHedgehogEating] = useState(false);
+  const [appleInAir, setAppleInAir] = useState<{id: number, x: number} | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { playHit } = useAudio();
 
@@ -73,6 +77,27 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     }
   }, [maxApples]);
 
+  // Effect to move hedgehog to catch the falling apple
+  useEffect(() => {
+    if (appleInAir) {
+      // Move hedgehog to catch the apple
+      setHedgehogPosition(appleInAir.x - 75); // Center hedgehog under apple
+      
+      // Show eating animation after apple reaches the hedgehog
+      const eatTimer = setTimeout(() => {
+        setIsHedgehogEating(true);
+        
+        // Reset eating animation
+        setTimeout(() => {
+          setIsHedgehogEating(false);
+          setAppleInAir(null);
+        }, 500);
+      }, 1000); // Timing adjusted to match apple fall animation
+      
+      return () => clearTimeout(eatTimer);
+    }
+  }, [appleInAir]);
+  
   // Handle apple collection
   const handleAppleClick = (id: number) => {
     if (applesCollected >= maxApples) return;
@@ -80,6 +105,9 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     // Find the clicked apple to get its position
     const clickedApple = apples.find(apple => apple.id === id);
     if (!clickedApple) return;
+    
+    // Set the current apple in air for hedgehog to track
+    setAppleInAir({ id: clickedApple.id, x: clickedApple.x });
     
     // Mark apple as collected
     setApples(prev => prev.map(apple => 
@@ -115,7 +143,7 @@ const AppleTree: React.FC<AppleTreeProps> = ({
         />
       ))}
       
-      {/* Counter for apples collected - now without a basket */}
+      {/* Counter for apples collected */}
       <div className="apple-counter">
         <div className="apple-counter-value">{applesCollected}</div>
       </div>
@@ -124,6 +152,12 @@ const AppleTree: React.FC<AppleTreeProps> = ({
       {countVisible && (
         <div className="counter">{currentCount}</div>
       )}
+      
+      {/* Hedgehog that eats the apples */}
+      <Hedgehog 
+        isEating={isHedgehogEating}
+        position={hedgehogPosition}
+      />
       
       {/* Audio manager for counting sounds */}
       <AudioManager 
