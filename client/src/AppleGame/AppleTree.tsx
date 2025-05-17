@@ -43,27 +43,31 @@ const AppleTree: React.FC<AppleTreeProps> = ({
     if (containerRef.current) {
       const containerWidth = containerRef.current.clientWidth;
       
-      // Define foliage ellipses from the isometric SVG for validation
+      // Define foliage ellipses from the isometric SVG for validation (adjusted for wider tree)
       const foliageCircles = [
-        { cx: 275, cy: 200, r: 42 },   // Top left foliage
-        { cx: 340, cy: 150, r: 50 },   // Left-top foliage
+        { cx: 250, cy: 200, r: 42 },   // Top left foliage (moved more left)
+        { cx: 330, cy: 150, r: 50 },   // Left-top foliage
         { cx: 400, cy: 130, r: 60 },   // Top center foliage
-        { cx: 460, cy: 150, r: 50 },   // Right-top foliage
-        { cx: 525, cy: 200, r: 42 },   // Top right foliage
+        { cx: 470, cy: 150, r: 50 },   // Right-top foliage
+        { cx: 550, cy: 200, r: 42 },   // Top right foliage (moved more right)
+        { cx: 290, cy: 180, r: 45 },   // Middle-left foliage (added)
+        { cx: 510, cy: 180, r: 45 },   // Middle-right foliage (added)
       ];
       
-      // Starting positions for the crown/top of the tree in isometric view
+      // Starting positions for the crown/top of the tree in isometric view (adjusted for wider tree)
       const topCrownPositions = [
-        { x: 275, y: 180 },  // Top left crown
-        { x: 340, y: 135 },   // Left-top crown
-        { x: 400, y: 115 },   // Top center crown
-        { x: 460, y: 135 },   // Right-top crown
-        { x: 525, y: 180 },   // Top right crown
-        { x: 350, y: 145 },   // Upper left-center crown
-        { x: 380, y: 125 },   // Left of top-center crown
-        { x: 420, y: 125 },   // Right of top-center crown
-        { x: 450, y: 145 },   // Upper right-center crown
-        { x: 400, y: 130 },   // Top-center crown
+        { x: 250, y: 180 },  // Top left crown (moved more left)
+        { x: 330, y: 135 },  // Left-top crown
+        { x: 400, y: 115 },  // Top center crown
+        { x: 470, y: 135 },  // Right-top crown
+        { x: 550, y: 180 },  // Top right crown (moved more right)
+        { x: 340, y: 145 },  // Upper left-center crown
+        { x: 370, y: 125 },  // Left of top-center crown
+        { x: 430, y: 125 },  // Right of top-center crown
+        { x: 460, y: 145 },  // Upper right-center crown
+        { x: 400, y: 130 },  // Top-center crown
+        { x: 290, y: 160 },  // Far left crown (added)
+        { x: 510, y: 160 },  // Far right crown (added)
       ];
       
       // Function to check if a point is inside any of the foliage circles

@@ -44,7 +44,7 @@
   max-height: 800px;
   position: relative;
   transform-origin: center bottom;
-  transform: scale(1.2);
+  transform: scale(1.2) scaleX(1.5);
   margin-top: 20px;
 }
 
