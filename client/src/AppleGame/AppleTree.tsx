@@ -29,7 +29,14 @@ const AppleTree: React.FC<AppleTreeProps> = ({
   const [isHedgehogEating, setIsHedgehogEating] = useState(false);
   const [appleInAir, setAppleInAir] = useState<{id: number, x: number} | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { playHit } = useAudio();
+  const { playHit, playNyam, setNyamSound } = useAudio();
+  
+  // Initialize nyam sound
+  useEffect(() => {
+    const nyamSound = new Audio('/sounds/nyam.mp3');
+    nyamSound.volume = 0.7;
+    setNyamSound(nyamSound);
+  }, [setNyamSound]);
 
   // Define fixed apple positions on the green parts of the tree
   useEffect(() => {
@@ -86,6 +93,8 @@ const AppleTree: React.FC<AppleTreeProps> = ({
       // Show eating animation after apple reaches the hedgehog
       const eatTimer = setTimeout(() => {
         setIsHedgehogEating(true);
+        // Play nyam sound when hedgehog eats an apple
+        playNyam();
         
         // Reset eating animation
         setTimeout(() => {

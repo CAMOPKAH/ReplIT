@@ -4,28 +4,33 @@ interface AudioState {
   backgroundMusic: HTMLAudioElement | null;
   hitSound: HTMLAudioElement | null;
   successSound: HTMLAudioElement | null;
+  nyamSound: HTMLAudioElement | null;
   isMuted: boolean;
   
   // Setter functions
   setBackgroundMusic: (music: HTMLAudioElement) => void;
   setHitSound: (sound: HTMLAudioElement) => void;
   setSuccessSound: (sound: HTMLAudioElement) => void;
+  setNyamSound: (sound: HTMLAudioElement) => void;
   
   // Control functions
   toggleMute: () => void;
   playHit: () => void;
   playSuccess: () => void;
+  playNyam: () => void;
 }
 
 export const useAudio = create<AudioState>((set, get) => ({
   backgroundMusic: null,
   hitSound: null,
   successSound: null,
+  nyamSound: null,
   isMuted: true, // Start muted by default
   
   setBackgroundMusic: (music) => set({ backgroundMusic: music }),
   setHitSound: (sound) => set({ hitSound: sound }),
   setSuccessSound: (sound) => set({ successSound: sound }),
+  setNyamSound: (sound) => set({ nyamSound: sound }),
   
   toggleMute: () => {
     const { isMuted } = get();
@@ -68,6 +73,22 @@ export const useAudio = create<AudioState>((set, get) => ({
       successSound.currentTime = 0;
       successSound.play().catch(error => {
         console.log("Success sound play prevented:", error);
+      });
+    }
+  },
+  
+  playNyam: () => {
+    const { nyamSound, isMuted } = get();
+    if (nyamSound) {
+      // If sound is muted, don't play anything
+      if (isMuted) {
+        console.log("Nyam sound skipped (muted)");
+        return;
+      }
+      
+      nyamSound.currentTime = 0;
+      nyamSound.play().catch(error => {
+        console.log("Nyam sound play prevented:", error);
       });
     }
   }
