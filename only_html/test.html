@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест ресурсов игры</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #4caf50;
+      text-align: center;
+    }
+    .resource-section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .resource-section h2 {
+      margin-top: 0;
+      color: #2c3e50;
+    }
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .resource-item {
+      border: 1px solid #eee;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+    }
+    .resource-item img {
+      max-width: 100%;
+      height: auto;
+      max-height: 100px;
+    }
+    .sound-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    button {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3e8e41;
+    }
+    .success {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+    .error {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    .back-button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Тест ресурсов игры "Яблоки и ёжик"</h1>
+  
+  <div class="resource-section">
+    <h2>Изображения</h2>
+    <div class="resource-grid" id="images-container">
+      <!-- Images will be loaded here -->
+    </div>
+  </div>
+  
+  <div class="resource-section">
+    <h2>Звуки</h2>
+    <div id="sounds-container">
+      <!-- Sounds will be loaded here -->
+    </div>
+  </div>
+  
+  <div class="resource-section">
+    <h2>JavaScript файлы</h2>
+    <div id="js-container">
+      <!-- JS files status will be shown here -->
+    </div>
+  </div>
+  
+  <button class="back-button" onclick="window.location.href='index.html'">Вернуться к игре</button>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Test images
+      const images = [
+        'assets/3d-hedgehog.svg',
+        'assets/apple.svg',
+        'assets/appletree.svg',
+        'assets/basket.svg',
+        'assets/hedgehog-new.svg',
+        'assets/hedgehog.svg',
+        'assets/isometric-tree.svg',
+        'assets/new-hedgehog.svg',
+        'assets/spiky-hedgehog.svg'
+      ];
+      
+      const imagesContainer = document.getElementById('images-container');
+      
+      images.forEach(imageSrc => {
+        const resourceItem = document.createElement('div');
+        resourceItem.className = 'resource-item';
+        
+        const img = document.createElement('img');
+        img.src = imageSrc;
+        img.alt = imageSrc.split('/').pop();
+        
+        img.onload = () => {
+          resourceItem.innerHTML += `<div class="success">✓ Загружено</div>`;
+        };
+        
+        img.onerror = () => {
+          resourceItem.innerHTML += `<div class="error">✗ Ошибка</div>`;
+        };
+        
+        resourceItem.appendChild(img);
+        resourceItem.innerHTML += `<div>${imageSrc.split('/').pop()}</div>`;
+        imagesContainer.appendChild(resourceItem);
+      });
+      
+      // Test sounds
+      const sounds = [
+        'sounds/background.mp3',
+        'sounds/hit.mp3',
+        'sounds/nyam.mp3',
+        'sounds/success.mp3'
+      ];
+      
+      const soundsContainer = document.getElementById('sounds-container');
+      
+      sounds.forEach(soundSrc => {
+        const resourceItem = document.createElement('div');
+        resourceItem.className = 'sound-item';
+        
+        const button = document.createElement('button');
+        button.textContent = 'Проиграть';
+        
+        const audio = document.createElement('audio');
+        audio.src = soundSrc;
+        
+        button.onclick = () => {
+          audio.currentTime = 0;
+          audio.play().catch(err => {
+            console.error('Error playing audio:', err);
+            alert('Ошибка воспроизведения. Возможно, для запуска звука требуется взаимодействие пользователя.');
+          });
+        };
+        
+        audio.oncanplaythrough = () => {
+          resourceItem.innerHTML += `<div class="success">✓ Загружено</div>`;
+        };
+        
+        audio.onerror = () => {
+          resourceItem.innerHTML += `<div class="error">✗ Ошибка</div>`;
+        };
+        
+        resourceItem.appendChild(button);
+        resourceItem.innerHTML += `<div>${soundSrc.split('/').pop()}</div>`;
+        soundsContainer.appendChild(resourceItem);
+      });
+      
+      // Test JS files
+      const jsFiles = [
+        'js/utils.js',
+        'js/audio-manager.js',
+        'js/game-state.js',
+        'js/hedgehog.js',
+        'js/apple.js',
+        'js/apple-tree.js',
+        'js/number-selection.js',
+        'js/game.js'
+      ];
+      
+      const jsContainer = document.getElementById('js-container');
+      
+      jsFiles.forEach(filePath => {
+        const resourceItem = document.createElement('div');
+        resourceItem.className = 'resource-item';
+        resourceItem.innerHTML = `<div>${filePath.split('/').pop()}</div>`;
+        
+        const script = document.createElement('script');
+        script.src = filePath;
+        
+        script.onload = () => {
+          resourceItem.innerHTML += `<div class="success">✓ Загружено</div>`;
+        };
+        
+        script.onerror = () => {
+          resourceItem.innerHTML += `<div class="error">✗ Ошибка</div>`;
+        };
+        
+        document.body.appendChild(script);
+        jsContainer.appendChild(resourceItem);
+      });
+    });
+  </script>
+</body>
+</html>

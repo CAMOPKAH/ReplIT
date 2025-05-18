@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запустить игру</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f9e8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4caf50;
+        }
+        .big-button {
+            display: inline-block;
+            background-color: #4caf50;
+            color: white;
+            font-size: 24px;
+            padding: 15px 30px;
+            margin: 30px 0;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .big-button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        ol {
+            text-align: left;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+        li {
+            margin-bottom: 15px;
+        }
+        .hedgehog-img {
+            width: 150px;
+            margin: 20px 0;
+        }
+        .apple-img {
+            width: 30px;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="assets/3d-hedgehog.svg" alt="Ёжик" class="hedgehog-img">
+        
+        <h1>Обучающая игра "Яблоки и ёжик"</h1>
+        
+        <p>
+            Помогите ёжику собрать яблоки и научитесь считать в увлекательной форме!
+            <img src="assets/apple.svg" alt="Яблоко" class="apple-img">
+        </p>
+        
+        <a href="index.html" class="big-button">Начать игру!</a>
+        
+        <h2>Как играть:</h2>
+        <ol>
+            <li>Нажимайте на яблоки на дереве</li>
+            <li>Ёжик будет собирать упавшие яблоки</li>
+            <li>После сбора всех яблок выберите правильное число</li>
+            <li>С каждыми 3 правильными ответами сложность растёт</li>
+        </ol>
+        
+        <p>
+            <small>Эта игра создана для работы без сервера и может быть запущена через двойной клик по файлу index.html</small>
+        </p>
+    </div>
+</body>
+</html>
