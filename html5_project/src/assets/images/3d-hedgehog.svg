@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+  <!-- Тень -->
+  <ellipse cx="256" cy="460" rx="140" ry="30" fill="#00000055"/>
+  
+  <!-- Слой иголок (задний) -->
+  <g>
+    <!-- Левая сторона -->
+    <path d="M120,260 L60,200" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M130,230 L55,160" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M150,210 L80,125" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M180,200 L110,110" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M210,190 L150,90" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M120,290 L40,260" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M130,320 L50,320" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M150,350 L80,390" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    
+    <!-- Правая сторона -->
+    <path d="M390,260 L450,200" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M380,230 L455,160" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M360,210 L430,125" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M330,200 L400,110" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M300,190 L360,90" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M390,290 L470,260" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M380,320 L460,320" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M360,350 L430,390" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    
+    <!-- Верхние иголки -->
+    <path d="M240,180 L210,80" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M256,175 L256,70" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <path d="M275,180 L300,80" stroke="#3E2723" stroke-width="8" stroke-linecap="round" fill="none"/>
+  </g>
+  
+  <!-- Средний слой иголок -->
+  <g>
+    <!-- Левая сторона -->
+    <path d="M140,250 L90,205" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M150,225 L90,170" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M170,205 L115,135" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M190,195 L135,120" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M215,185 L170,100" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M140,280 L75,255" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M150,310 L80,310" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M170,340 L110,375" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- Правая сторона -->
+    <path d="M370,250 L420,205" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M360,225 L420,170" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M340,205 L395,135" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M320,195 L375,120" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M295,185 L340,100" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M370,280 L435,255" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M360,310 L430,310" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M340,340 L400,375" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    
+    <!-- Верхние иголки -->
+    <path d="M235,178 L210,90" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M256,173 L256,85" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M280,178 L305,90" stroke="#5D4037" stroke-width="6" stroke-linecap="round" fill="none"/>
+  </g>
+  
+  <!-- Передний слой иголок - самые яркие и четкие -->
+  <g>
+    <!-- Левая сторона -->
+    <path d="M160,240 L120,210" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M170,220 L125,180" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M190,200 L150,145" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M210,190 L165,130" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M230,185 L190,110" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M160,270 L110,250" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M170,300 L110,300" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M190,330 L140,360" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    
+    <!-- Правая сторона -->
+    <path d="M350,240 L390,210" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M340,220 L385,180" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M320,200 L360,145" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M300,190 L345,130" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M280,185 L320,110" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M350,270 L400,250" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M340,300 L400,300" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M320,330 L370,360" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    
+    <!-- Верхние иголки -->
+    <path d="M230,176 L215,100" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M256,171 L256,95" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M285,176 L300,100" stroke="#8D6E63" stroke-width="4" stroke-linecap="round" fill="none"/>
+  </g>
+  
+  <!-- Тело ежика с градиентом для объемности -->
+  <g>
+    <!-- Основное тело -->
+    <ellipse cx="256" cy="280" rx="130" ry="110" fill="#795548"/>
+    
+    <!-- Верхний блик для объемности -->
+    <ellipse cx="256" cy="250" rx="110" ry="80" fill="#8D6E63"/>
+    
+    <!-- Блик сверху для 3D эффекта -->
+    <ellipse cx="256" cy="235" rx="60" ry="40" fill="#A1887F" opacity="0.6"/>
+  </g>
+  
+  <!-- Живот ежика (светлее) с градиентом -->
+  <g>
+    <ellipse cx="256" cy="320" rx="85" ry="60" fill="#A1887F"/>
+    <ellipse cx="256" cy="315" rx="75" ry="50" fill="#BCAAA4"/>
+    <ellipse cx="256" cy="310" rx="60" ry="40" fill="#D7CCC8"/>
+  </g>
+  
+  <!-- Голова ежика с градиентом для объемности -->
+  <g>
+    <!-- Основа головы -->
+    <ellipse cx="256" cy="210" rx="70" ry="60" fill="#795548"/>
+    
+    <!-- Верхний слой для объемности -->
+    <ellipse cx="256" cy="205" rx="60" ry="50" fill="#8D6E63"/>
+  </g>
+  
+  <!-- Мордочка ежика (светлее) с градиентом -->
+  <g>
+    <ellipse cx="256" cy="225" rx="50" ry="40" fill="#8D6E63"/>
+    <ellipse cx="256" cy="222" rx="42" ry="32" fill="#A1887F"/>
+    <ellipse cx="256" cy="218" rx="35" ry="25" fill="#BCAAA4" opacity="0.5"/>
+  </g>
+  
+  <!-- Нос с бликом -->
+  <g>
+    <ellipse cx="256" cy="235" rx="14" ry="10" fill="#3E2723"/>
+    <ellipse cx="252" cy="232" rx="4" ry="3" fill="#5D4037"/>
+  </g>
+  
+  <!-- Глаза с бликами -->
+  <g>
+    <!-- Левый глаз -->
+    <ellipse cx="226" cy="210" rx="14" ry="16" fill="white"/>
+    <ellipse cx="226" cy="214" rx="8" ry="10" fill="#263238"/>
+    <ellipse cx="222" cy="210" rx="5" ry="5" fill="white"/>
+    
+    <!-- Правый глаз -->
+    <ellipse cx="286" cy="210" rx="14" ry="16" fill="white"/>
+    <ellipse cx="286" cy="214" rx="8" ry="10" fill="#263238"/>
+    <ellipse cx="282" cy="210" rx="5" ry="5" fill="white"/>
+  </g>
+  
+  <!-- Ушки с оттенками -->
+  <g>
+    <!-- Левое ухо -->
+    <ellipse cx="215" cy="165" rx="15" ry="20" fill="#5D4037"/>
+    <ellipse cx="215" cy="165" rx="10" ry="15" fill="#6D4C41"/>
+    <ellipse cx="215" cy="163" rx="5" ry="10" fill="#795548"/>
+    
+    <!-- Правое ухо -->
+    <ellipse cx="297" cy="165" rx="15" ry="20" fill="#5D4037"/>
+    <ellipse cx="297" cy="165" rx="10" ry="15" fill="#6D4C41"/>
+    <ellipse cx="297" cy="163" rx="5" ry="10" fill="#795548"/>
+  </g>
+  
+  <!-- Лапки с объемом -->
+  <g>
+    <!-- Левая лапка -->
+    <ellipse cx="200" cy="360" rx="30" ry="20" fill="#5D4037"/>
+    <ellipse cx="200" cy="358" rx="24" ry="16" fill="#6D4C41"/>
+    <ellipse cx="200" cy="356" rx="18" ry="12" fill="#795548"/>
+    
+    <!-- Правая лапка -->
+    <ellipse cx="312" cy="360" rx="30" ry="20" fill="#5D4037"/>
+    <ellipse cx="312" cy="358" rx="24" ry="16" fill="#6D4C41"/>
+    <ellipse cx="312" cy="356" rx="18" ry="12" fill="#795548"/>
+  </g>
+  
+  <!-- Рот с улыбкой -->
+  <path d="M235,245 Q256,260 277,245" stroke="#3E2723" stroke-width="3" fill="none"/>
+  
+  <!-- Блики на щеках для объемности -->
+  <ellipse cx="220" cy="230" rx="12" ry="8" fill="#D7CCC8" opacity="0.5"/>
+  <ellipse cx="292" cy="230" rx="12" ry="8" fill="#D7CCC8" opacity="0.5"/>
+</svg>

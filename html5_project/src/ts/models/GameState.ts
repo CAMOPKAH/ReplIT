@@ -33,8 +33,19 @@ export class GameState {
     levelUp: "Отлично! Переходим на следующий уровень!"
   };
   
-  // Обработчики изменения состояния
-  private stateChangeHandlers: { [key in GameStateType]?: (() => void)[] } = {};
+  // Определение типов для обработчиков событий
+  private stateHandlers: Record<GameStateType, (() => void)[]> = {
+    [GameStateType.LOADING]: [],
+    [GameStateType.MAIN_MENU]: [],
+    [GameStateType.COLLECTING]: [],
+    [GameStateType.SELECTING]: [],
+    [GameStateType.SUCCESS]: [],
+    [GameStateType.HINT]: [],
+    [GameStateType.LEVEL_UP]: []
+  };
+  
+  // Обработчики для событий "any"
+  private anyStateHandlers: ((oldState: GameStateType, newState: GameStateType) => void)[] = [];
   
   /**
    * Получение текущего состояния игры
@@ -55,42 +66,59 @@ export class GameState {
     this.notifyStateChange(newState);
     
     // Вызов обработчиков для любого состояния
-    this.notifyStateChange('any' as GameStateType, oldState, newState);
+    this.notifyAnyStateChange(oldState, newState);
   }
   
   /**
-   * Регистрация обработчика изменения состояния
+   * Регистрация обработчика изменения состояния для конкретного состояния
    * @param state Состояние игры для обработки
    * @param handler Функция обработчик
    */
+  public onStateChange(state: GameStateType, handler: () => void): void;
+  
+  /**
+   * Регистрация обработчика изменения для любого изменения состояния
+   * @param state Специальное значение 'any'
+   * @param handler Функция обработчик, получающая старое и новое состояния
+   */
+  public onStateChange(state: 'any', handler: (oldState: GameStateType, newState: GameStateType) => void): void;
+  
+  /**
+   * Реализация методов регистрации обработчиков
+   */
   public onStateChange(
     state: GameStateType | 'any', 
-    handler: (oldState?: GameStateType, newState?: GameStateType) => void
+    handler: (() => void) | ((oldState: GameStateType, newState: GameStateType) => void)
   ): void {
-    if (!this.stateChangeHandlers[state]) {
-      this.stateChangeHandlers[state] = [];
+    if (state === 'any') {
+      this.anyStateHandlers.push(handler as (oldState: GameStateType, newState: GameStateType) => void);
+    } else {
+      this.stateHandlers[state].push(handler as () => void);
     }
-    this.stateChangeHandlers[state]?.push(handler);
   }
   
   /**
    * Уведомление всех зарегистрированных обработчиков об изменении состояния
    * @param state Состояние, для которого вызываются обработчики
-   * @param oldState Предыдущее состояние (для обработчиков 'any')
-   * @param newState Новое состояние (для обработчиков 'any')
    */
-  private notifyStateChange(
-    state: GameStateType,
-    oldState?: GameStateType,
-    newState?: GameStateType
-  ): void {
-    if (this.stateChangeHandlers[state]) {
-      this.stateChangeHandlers[state]?.forEach(handler => {
-        if (state === 'any') {
-          handler(oldState, newState);
-        } else {
-          handler();
-        }
+  private notifyStateChange(state: GameStateType): void {
+    const handlers = this.stateHandlers[state];
+    if (handlers && handlers.length > 0) {
+      handlers.forEach((handler: () => void) => {
+        handler();
+      });
+    }
+  }
+  
+  /**
+   * Уведомление обработчиков "any" об изменении состояния
+   * @param oldState Предыдущее состояние
+   * @param newState Новое состояние
+   */
+  private notifyAnyStateChange(oldState: GameStateType, newState: GameStateType): void {
+    if (this.anyStateHandlers.length > 0) {
+      this.anyStateHandlers.forEach((handler: (oldState: GameStateType, newState: GameStateType) => void) => {
+        handler(oldState, newState);
       });
     }
   }

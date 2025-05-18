@@ -1,0 +1,13 @@
+<svg width="50" height="60" viewBox="0 0 50 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Apple stem -->
+  <path d="M25 5 Q30 0 35 5" stroke="#8B4513" stroke-width="2" fill="none" />
+  
+  <!-- Apple leaf -->
+  <path d="M35 5 Q40 0 45 5 Q40 10 35 5 Z" fill="#228B22" />
+  
+  <!-- Apple body -->
+  <path d="M25 10 C10 10 5 25 10 40 C15 50 35 50 40 40 C45 25 40 10 25 10 Z" fill="#E30B0B" />
+  
+  <!-- Apple highlight -->
+  <path d="M18 20 C15 25 20 35 25 30 C30 25 22 15 18 20 Z" fill="#FF3B3B" />
+</svg>
