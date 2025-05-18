@@ -1,0 +1,44 @@
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Basket base and shadow -->
+  <ellipse cx="150" cy="180" rx="140" ry="18" fill="#8B4513" />
+  <ellipse cx="150" cy="180" rx="130" ry="15" fill="#5D3917" opacity="0.5" />
+  
+  <!-- 3D basket shape - this creates a more bowl-like shape -->
+  <path d="M25 90 
+           C25 90, 60 140, 150 140 
+           C240 140, 275 90, 275 90
+           L265 175 
+           C265 175, 200 190, 150 190
+           C100 190, 35 175, 35 175 Z" 
+        fill="#FFF8E8" />
+  
+  <!-- Basket rim and edges -->
+  <path d="M25 90 C25 90, 60 60, 150 60 C240 60, 275 90, 275 90" 
+        fill="none" stroke="#8B4513" stroke-width="6" />
+  <path d="M25 90 L35 175" fill="none" stroke="#8B4513" stroke-width="5" />
+  <path d="M275 90 L265 175" fill="none" stroke="#8B4513" stroke-width="5" />
+  
+  <!-- Basket handle -->
+  <path d="M70 80 C70 20, 230 20, 230 80" 
+        fill="none" stroke="#8B4513" stroke-width="6" />
+  
+  <!-- Basket weave pattern - horizontal -->
+  <path d="M35 100 Q90 105, 150 105 Q210 105, 265 100" stroke="#A0522D" stroke-width="2" />
+  <path d="M35 115 Q90 120, 150 120 Q210 120, 265 115" stroke="#A0522D" stroke-width="2" />
+  <path d="M35 130 Q90 135, 150 135 Q210 135, 265 130" stroke="#A0522D" stroke-width="2" />
+  <path d="M40 145 Q90 150, 150 150 Q210 150, 260 145" stroke="#A0522D" stroke-width="2" />
+  <path d="M45 160 Q90 165, 150 165 Q210 165, 255 160" stroke="#A0522D" stroke-width="2" />
+  
+  <!-- Basket weave pattern - vertical -->
+  <path d="M60 90 Q62 130, 65 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M90 85 Q92 130, 95 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M120 80 Q122 125, 125 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M150 80 Q152 125, 150 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M180 80 Q182 125, 175 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M210 85 Q212 130, 205 175" stroke="#A0522D" stroke-width="2" />
+  <path d="M240 90 Q242 130, 235 175" stroke="#A0522D" stroke-width="2" />
+  
+  <!-- Counter circle with better design -->
+  <circle cx="150" cy="35" r="25" fill="white" stroke="#8B4513" stroke-width="4" />
+  <circle cx="150" cy="35" r="22" fill="#FFFAF0" />
+</svg>

@@ -1,0 +1,36 @@
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tree trunk -->
+  <path d="M400 500 L380 300 L420 300 Z" fill="#8B4513" />
+  <rect x="385" y="300" width="30" height="200" fill="#8B4513" />
+  
+  <!-- Ground/grass -->
+  <ellipse cx="400" cy="500" rx="200" ry="20" fill="#7CFC00" opacity="0.5" />
+  
+  <!-- Tree branches -->
+  <path d="M400 300 L300 250 L280 230" stroke="#8B4513" stroke-width="10" fill="none" />
+  <path d="M400 300 L500 250 L520 230" stroke="#8B4513" stroke-width="10" fill="none" />
+  <path d="M400 300 L350 200 L330 170" stroke="#8B4513" stroke-width="10" fill="none" />
+  <path d="M400 300 L450 200 L470 170" stroke="#8B4513" stroke-width="10" fill="none" />
+  
+  <!-- Small branches for apples -->
+  <path d="M280 230 L260 250" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M310 220 L290 200" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M350 200 L320 180" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M400 170 L370 150" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M430 170 L450 140" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M480 190 L510 180" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M520 230 L550 220" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M300 250 L270 270" stroke="#8B4513" stroke-width="3" fill="none" />
+  <path d="M500 250 L530 270" stroke="#8B4513" stroke-width="3" fill="none" />
+  
+  <!-- Tree foliage -->
+  <circle cx="280" cy="230" r="50" fill="#228B22" />
+  <circle cx="330" cy="170" r="60" fill="#228B22" />
+  <circle cx="400" cy="150" r="70" fill="#228B22" />
+  <circle cx="470" cy="170" r="60" fill="#228B22" />
+  <circle cx="520" cy="230" r="50" fill="#228B22" />
+  <circle cx="300" cy="250" r="55" fill="#228B22" />
+  <circle cx="500" cy="250" r="55" fill="#228B22" />
+  <circle cx="350" cy="200" r="65" fill="#228B22" />
+  <circle cx="450" cy="200" r="65" fill="#228B22" />
+</svg>

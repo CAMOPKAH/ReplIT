@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="150" height="120" viewBox="0 0 150 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main body -->
+  <ellipse cx="75" cy="80" rx="50" ry="35" fill="#6D4C41"/>
+  
+  <!-- Face -->
+  <ellipse cx="115" cy="80" rx="25" ry="20" fill="#8D6E63"/>
+  
+  <!-- Eyes -->
+  <circle cx="125" cy="72" r="4" fill="black"/>
+  <circle cx="126" cy="71" r="1" fill="white"/>
+  
+  <!-- Nose -->
+  <ellipse cx="138" cy="80" rx="5" ry="3" fill="#4E342E"/>
+  
+  <!-- Ears -->
+  <ellipse cx="105" cy="65" rx="8" ry="6" fill="#8D6E63" transform="rotate(-15 105 65)"/>
+  
+  <!-- Spikes -->
+  <!-- First row of spikes -->
+  <line x1="30" y1="55" x2="20" y2="35" stroke="#4E342E" stroke-width="3"/>
+  <line x1="40" y1="50" x2="32" y2="30" stroke="#4E342E" stroke-width="3"/>
+  <line x1="50" y1="48" x2="45" y2="25" stroke="#4E342E" stroke-width="3"/>
+  <line x1="60" y1="45" x2="58" y2="22" stroke="#4E342E" stroke-width="3"/>
+  <line x1="70" y1="45" x2="70" y2="20" stroke="#4E342E" stroke-width="3"/>
+  <line x1="80" y1="45" x2="82" y2="22" stroke="#4E342E" stroke-width="3"/>
+  <line x1="90" y1="48" x2="95" y2="25" stroke="#4E342E" stroke-width="3"/>
+  <line x1="100" y1="50" x2="108" y2="30" stroke="#4E342E" stroke-width="3"/>
+  
+  <!-- Second row of spikes -->
+  <line x1="25" y1="65" x2="10" y2="55" stroke="#4E342E" stroke-width="3"/>
+  <line x1="35" y1="60" x2="22" y2="45" stroke="#4E342E" stroke-width="3"/>
+  <line x1="45" y1="58" x2="35" y2="40" stroke="#4E342E" stroke-width="3"/>
+  <line x1="55" y1="55" x2="48" y2="37" stroke="#4E342E" stroke-width="3"/>
+  <line x1="65" y1="55" x2="60" y2="35" stroke="#4E342E" stroke-width="3"/>
+  <line x1="75" y1="55" x2="73" y2="35" stroke="#4E342E" stroke-width="3"/>
+  <line x1="85" y1="55" x2="90" y2="35" stroke="#4E342E" stroke-width="3"/>
+  <line x1="95" y1="58" x2="105" y2="40" stroke="#4E342E" stroke-width="3"/>
+  
+  <!-- Legs -->
+  <ellipse cx="50" cy="105" rx="10" ry="5" fill="#8D6E63"/>
+  <ellipse cx="100" cy="105" rx="10" ry="5" fill="#8D6E63"/>
+  
+  <!-- Mouth -->
+  <path d="M130,83 Q132,86 128,88" fill="none" stroke="#4E342E" stroke-width="1.5"/>
+  
+  <!-- Happy expression animation -->
+  <g class="happyface">
+    <path d="M125,78 Q128,82 131,78" fill="none" stroke="#4E342E" stroke-width="1" stroke-linecap="round"/>
+  </g>
+</svg>
